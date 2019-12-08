@@ -14,10 +14,13 @@ pub fn run(){
 }
 
 fn valid(value: i32)-> bool {
+    let mut count = [0; 10];
     let mut double = false;
     let mut prev = cipher(value, 0);
+    count[prev as usize] = 1;
     for factor in 1..6{
         let val = cipher(value, factor);
+        count[val as usize] += 1;
         if prev == val {
             double = true;
         }
@@ -26,10 +29,15 @@ fn valid(value: i32)-> bool {
         }
         prev = val;
     }
-    if double{
-        println!("Found: {}", value);
+    if !double {
+        return false;
     }
-    return double;
+    for value in &count{
+        if *value == 2{
+            return true;
+        }
+    }
+    return false;
 }
 
 fn cipher(value: i32, idx: u32) -> i32 {
@@ -39,10 +47,18 @@ fn cipher(value: i32, idx: u32) -> i32 {
 }
 
 #[test]
-fn examples(){
+fn intern(){
     assert_eq!(cipher(123456, 3), 3);
+}
+#[test]
+fn examples(){
     assert_eq!(valid(111111), false);
     assert_eq!(valid(223450), false);
     assert_eq!(valid(123789), false);
-
+}
+#[test]
+fn examples2(){
+    assert_eq!(valid(112233), true);
+    assert_eq!(valid(123444), false);
+    assert_eq!(valid(111122), true);
 }
