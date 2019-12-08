@@ -48,7 +48,12 @@ fn cipher(value: i32, idx: u32) -> i32 {
 
 #[test]
 fn intern(){
+    assert_eq!(cipher(123456, 0), 6);
+    assert_eq!(cipher(123456, 1), 5);
+    assert_eq!(cipher(123456, 2), 4);
     assert_eq!(cipher(123456, 3), 3);
+    assert_eq!(cipher(123456, 4), 2);
+    assert_eq!(cipher(123456, 5), 1);
 }
 #[test]
 fn examples(){
