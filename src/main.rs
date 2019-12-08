@@ -1,7 +1,8 @@
 use std::io;
 
 mod day1;
-mod day2;
+mod day2; 
+mod day3;
 
 fn main() {
     println!("Advent of code");
@@ -19,6 +20,7 @@ fn main() {
     match day {
         1 => day1::run(),
         2 => day2::run(),
+        3 => day3::run(),
         _ => println!("Not implemented"),
     }
 }
