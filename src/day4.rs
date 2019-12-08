@@ -15,15 +15,16 @@ pub fn run(){
 
 fn valid(value: i32)-> bool {
     let mut double = false;
-    for factor in 0..5{
-        let prev = cipher(value, factor + 1);
+    let mut prev = cipher(value, 0);
+    for factor in 1..6{
         let val = cipher(value, factor);
         if prev == val {
             double = true;
         }
-        if prev > val {
+        if prev < val {
             return false;
         }
+        prev = val;
     }
     if double{
         println!("Found: {}", value);
@@ -40,7 +41,8 @@ fn cipher(value: i32, idx: u32) -> i32 {
 #[test]
 fn examples(){
     assert_eq!(cipher(123456, 3), 3);
-    assert_eq!(valid(111111), true);
+    assert_eq!(valid(111111), false);
     assert_eq!(valid(223450), false);
     assert_eq!(valid(123789), false);
+
 }
