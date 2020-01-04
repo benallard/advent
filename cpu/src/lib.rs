@@ -1,17 +1,40 @@
-pub fn process(program:&mut Vec<i32>){
-    let mut idx=0;
+struct CPU{
+    mem: Vec<i32>,
+    ip: usize
+}
+
+impl CPU {
+    pub fn new(mem: &[i32]) -> CPU{
+        CPU{
+            mem: mem.to_vec(),
+            ip: 0
+        }
+    }
+
+    pub fn run(&mut self){
     loop {
         let res;
-        match program[idx] {
-            1 => res = program[program[idx+1] as usize] + program[program[idx+2] as usize],
-            2 => res = program[program[idx+1] as usize] * program[program[idx+2] as usize],
+        match self.mem[self.ip] {
+            1 => res = self.arg(1) + self.arg(2),
+            2 => res = self.arg(1) * self.arg(2),
             99 => return,
-            _ => panic!(program[idx]),
+            _ => panic!(self.mem[self.ip]),
         }
-        let residx = program[idx + 3] as usize;
-        program[residx] = res;
-        idx += 4;
+        let residx = self.mem[self.ip + 3] as usize;
+        self.mem[residx] = res;
+        self.ip += 4;
     }
+    }
+
+    fn arg(&mut self, offset: usize) -> i32{
+        return self.mem[self.mem[self.ip + offset] as usize];
+    }
+}
+
+pub fn process(program: &mut Vec<i32>){
+    let mut cpu = CPU::new(program);
+    cpu.run();
+    *program = cpu.mem;
 }
 
 #[test]
