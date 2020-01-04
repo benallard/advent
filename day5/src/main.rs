@@ -11,7 +11,7 @@ fn main() {
   let orig:Vec<i32> = content.split(",").map(|s| s.trim().parse().unwrap()).collect();
 
   let mut cpu = cpu::CPU::new(&orig);
-  cpu.feed(1);
+  cpu.feed(5);
   cpu.run();
   println!("Diagnostic code: {}", cpu.starve());
 }

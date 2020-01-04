@@ -45,6 +45,38 @@ impl CPU {
                     self.output(self.get(1));
                     self.ip += 2;
                 },
+                5 => {
+                    let val = self.get(1);
+                    if val != 0 {
+                        self.ip = self.get(2) as usize;
+                    } else {
+                        self.ip += 3;
+                    }
+                },
+                6 => {
+                    let val = self.get(1);
+                    if val == 0 {
+                        self.ip = self.get(2) as usize;
+                    } else {
+                        self.ip += 3;
+                    }
+                },
+                7 => {
+                    if self.get(1) < self.get(2){
+                        self.put(3, 1);
+                    } else {
+                        self.put(3, 0);
+                    }
+                    self.ip += 4;
+                },
+                8 => {
+                    if self.get(1) == self.get(2){
+                        self.put(3, 1);
+                    } else {
+                        self.put(3, 0);
+                    }
+                    self.ip += 4;
+                },
                 99 => return,
                 _ => panic!(self.read(self.ip)),
             }
