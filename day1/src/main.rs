@@ -2,7 +2,7 @@ use std::io::BufReader;
 use std::io::BufRead;
 use std::fs::File;
 
-pub fn run(){
+fn main(){
     let f = File::open("day1.txt").unwrap();
     let f = BufReader::new(f);
 
@@ -40,7 +40,7 @@ fn examples(){
 }
 
 #[test]
-fn examplesi2(){
+fn examples2(){
     assert_eq!(total_fuel(14), 2);
     assert_eq!(total_fuel(1969), 966);
     assert_eq!(total_fuel(100756), 50346)

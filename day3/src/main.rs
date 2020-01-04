@@ -8,7 +8,7 @@ struct Point {
     y: i32,
 }
 
-pub fn run() {
+fn main() {
   let f = File::open("day3.txt").unwrap();
   let mut f = BufReader::new(f);
   let mut path1 = String::new();

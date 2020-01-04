@@ -1,4 +1,4 @@
-pub fn run(){
+fn main(){
     let input = "125730-579381";
     let input: Vec<&str> = input.split("-").collect();
     let min: i32 = input[0].trim().parse().unwrap();

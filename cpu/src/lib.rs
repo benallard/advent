@@ -1,30 +1,4 @@
-use std::io::Read;
-use std::fs::File;
-
-pub fn run() {
-  let mut f = File::open("day2.txt").unwrap();
-  let mut content = String::new();
-  f.read_to_string(&mut content).unwrap();
-
-  let orig:Vec<i32> = content.split(",").map(|s| s.trim().parse().unwrap()).collect();
-
-  for noun in 0..100 {
-      for verb in 0..100 {
-          let mut program = orig.to_vec();
-          program[1] = noun;
-          program[2] = verb;
-          process(&mut program);
-          if program[0] == 19690720 {
-              println!("Found! noun={}, verb={}", noun, verb);
-              return;
-          }
-      }
-  }
-
-  println!("Not found");
-}
-
-fn process(program:&mut Vec<i32>){
+pub fn process(program:&mut Vec<i32>){
     let mut idx=0;
     loop {
         let res;
