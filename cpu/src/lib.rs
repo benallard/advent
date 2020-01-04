@@ -25,24 +25,24 @@ impl CPU {
 
     pub fn run(&mut self){
         loop {
-            match self.read(self.ip) % 100 {
+            match self.opcode() {
                 1 => {
-                    let res = self.arg(1) + self.arg(2);
-                    self.write(self.read(self.ip + 3) as usize, res);
+                    let res = self.get(1) + self.get(2);
+                    self.put(3, res);
                     self.ip += 4;
                 },
                 2 => {
-                    let res = self.arg(1) * self.arg(2);
-                    self.write(self.read(self.ip + 3) as usize, res);
+                    let res = self.get(1) * self.get(2);
+                    self.put(3, res);
                     self.ip += 4;
                 },
                 3 => {
                     let val = self.input();
-                    self.write(self.arg(1) as usize, val);
+                    self.put(1, val);
                     self.ip += 2;
                 },
                 4 => {
-                    self.output(self.arg(1));
+                    self.output(self.get(1));
                     self.ip += 2;
                 },
                 99 => return,
@@ -51,8 +51,26 @@ impl CPU {
         }
     }
 
-    fn arg(&self, offset: usize) -> i32{
-        return self.read(self.read(self.ip + offset) as usize);
+    fn opcode(&self)-> u16{
+        return (self.read(self.ip) % 100) as u16;
+    }
+
+    fn mode(&self, offset: usize) -> u8 {
+        let val = self.read(self.ip) / 100;
+        return (val / 10i32.pow((offset - 1) as u32) % 10) as u8;
+    }
+
+    fn get(&self, offset: usize) -> i32{
+        let value = self.read(self.ip + offset);
+        return match self.mode(offset){
+            0=> self.read(value as usize),
+            1=> value,
+            _ => panic!(self.read(self.ip)),
+        };
+    }
+
+    fn put(&mut self, offset: usize, value: i32){
+        self.write(self.read(self.ip + offset) as usize, value);
     }
     
     fn input(&mut self) -> i32{
@@ -64,12 +82,12 @@ impl CPU {
         self.output = value
     }
 
-
     fn read(&self, addr: usize) -> i32{
         return self.mem[addr];
     }
 
     fn write(&mut self, addr: usize, value: i32){
+        //println!("Writing {} to {}", value, addr);
         self.mem[addr] = value;
     }
 }
