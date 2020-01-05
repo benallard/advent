@@ -106,15 +106,17 @@ impl CPU {
     }
     
     fn input(&mut self) -> i32{
+        //println!("Input is {}", self.inputs[0]);
         return self.inputs.remove(0);
     }
 
     fn output(&mut self, value: i32){
-        println!("output: {}", value);
+        //println!("output: {}", value);
         self.output = value
     }
 
     fn read(&self, addr: usize) -> i32{
+        //println!("Reading {} @{}", self.mem[addr], addr);
         return self.mem[addr];
     }
 
