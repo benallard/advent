@@ -4,6 +4,7 @@ pub struct CPU{
     ip: usize,
     inputs: Vec<i32>,
     output: i32,
+    done: bool,
 }
 
 impl CPU {
@@ -23,6 +24,10 @@ impl CPU {
         return self.output;
     }
 
+    pub fn done(&self) -> bool{
+        self.done
+    }
+
     pub fn run(&mut self){
         loop {
             match self.opcode() {
@@ -37,6 +42,10 @@ impl CPU {
                     self.ip += 4;
                 },
                 3 => {
+                    if self.inputs.is_empty(){
+                        println!("Input required");
+                        break;
+                    }
                     let val = self.input();
                     self.put(1, val);
                     self.ip += 2;
@@ -77,7 +86,10 @@ impl CPU {
                     }
                     self.ip += 4;
                 },
-                99 => return,
+                99 => {
+                    self.done = true;
+                    break;
+                },
                 _ => panic!(self.read(self.ip)),
             }
         }
