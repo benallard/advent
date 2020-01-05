@@ -30,3 +30,7 @@ dependencies = [
  "cpu 0.1.0",
 ]
 
+[[package]]
+name = "day6"
+version = "0.1.0"
+
