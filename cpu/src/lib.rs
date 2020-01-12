@@ -143,12 +143,12 @@ impl CPU {
     }
 
     fn read(&self, addr: usize) -> i64 {
-        println!("Reading {} @{}", self.mem[addr], addr);
+        //println!("Reading {} @{}", self.mem[addr], addr);
         return self.mem.get(addr).copied().unwrap_or(0);
     }
 
     fn write(&mut self, addr: usize, value: i64) {
-        println!("Writing {} to {}", value, addr);
+        //println!("Writing {} to {}", value, addr);
         self.mem.resize(self.mem.len().max(addr + 1), 0);
         self.mem[addr] = value;
     }

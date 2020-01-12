@@ -14,7 +14,7 @@ fn main() {
         .collect();
 
     let mut cpu = cpu::CPU::new(&orig);
-    cpu.feed(1);
+    cpu.feed(2);
     cpu.run();
     loop {
         let res = cpu.starve();
