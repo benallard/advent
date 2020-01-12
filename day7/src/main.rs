@@ -12,7 +12,7 @@ fn main() {
     println!("With feedback: {}", get_max(&content, 5, 10));
 }
 
-fn get_max(content: &str, x: u8, y: u8) -> i32 {
+fn get_max(content: &str, x: u8, y: u8) -> i64 {
     let mut res = 0;
     for a in x..y {
         for b in x..y {
@@ -62,13 +62,13 @@ fn get_max(content: &str, x: u8, y: u8) -> i32 {
 }
 
 fn amplifier(pgm: &str, phase: u8) -> CPU {
-    let orig: Vec<i32> = pgm.split(",").map(|s| s.trim().parse().unwrap()).collect();
+    let orig: Vec<i64> = pgm.split(",").map(|s| s.trim().parse().unwrap()).collect();
     let mut cpu = CPU::new(&orig);
-    cpu.feed(phase as i32);
+    cpu.feed(phase as i64);
     return cpu;
 }
 
-fn setup(pgm: &str, phase: Vec<u8>) -> i32 {
+fn setup(pgm: &str, phase: Vec<u8>) -> i64 {
     let mut amp_a = amplifier(pgm, phase[0]);
     let mut amp_b = amplifier(pgm, phase[1]);
     let mut amp_c = amplifier(pgm, phase[2]);
@@ -78,15 +78,15 @@ fn setup(pgm: &str, phase: Vec<u8>) -> i32 {
     loop {
         amp_a.feed(seed);
         amp_a.run();
-        amp_b.feed(amp_a.starve());
+        amp_b.feed(amp_a.starve().unwrap());
         amp_b.run();
-        amp_c.feed(amp_b.starve());
+        amp_c.feed(amp_b.starve().unwrap());
         amp_c.run();
-        amp_d.feed(amp_c.starve());
+        amp_d.feed(amp_c.starve().unwrap());
         amp_d.run();
-        amp_e.feed(amp_d.starve());
+        amp_e.feed(amp_d.starve().unwrap());
         amp_e.run();
-        seed = amp_e.starve();
+        seed = amp_e.starve().unwrap();
         if amp_e.done() {
             break;
         }
@@ -120,7 +120,7 @@ fn test1() {
 
 #[test]
 fn test2() {
-    assert!(139629729 < std::i32::MAX);
+    assert!(139629729 < std::i64::MAX);
     assert_eq!(
         139629729,
         get_max(

@@ -8,7 +8,7 @@ fn main() {
     let mut content = String::new();
     f.read_to_string(&mut content).unwrap();
 
-    let orig: Vec<i32> = content
+    let orig: Vec<i64> = content
         .split(",")
         .map(|s| s.trim().parse().unwrap())
         .collect();

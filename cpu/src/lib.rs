@@ -1,14 +1,15 @@
 #[derive(Default)]
 pub struct CPU {
-    mem: Vec<i32>,
+    mem: Vec<i64>,
     ip: usize,
-    inputs: Vec<i32>,
-    output: i32,
+    inputs: Vec<i64>,
+    outputs: Vec<i64>,
     done: bool,
+    relative_base: i64,
 }
 
 impl CPU {
-    pub fn new(mem: &[i32]) -> CPU {
+    pub fn new(mem: &[i64]) -> CPU {
         CPU {
             mem: mem.to_vec(),
             ip: 0,
@@ -16,12 +17,16 @@ impl CPU {
         }
     }
 
-    pub fn feed(&mut self, input: i32) {
+    pub fn feed(&mut self, input: i64) {
         self.inputs.push(input);
     }
 
-    pub fn starve(&self) -> i32 {
-        return self.output;
+    pub fn starve(&mut self) -> Option<i64> {
+        let res = self.outputs.get(0).copied();
+        if res.is_some() {
+            self.outputs.remove(0);
+        }
+        return res;
     }
 
     pub fn done(&self) -> bool {
@@ -43,7 +48,7 @@ impl CPU {
                 }
                 3 => {
                     if self.inputs.is_empty() {
-                        println!("Input required");
+                        //println!("Input required");
                         break;
                     }
                     let val = self.input();
@@ -86,6 +91,10 @@ impl CPU {
                     }
                     self.ip += 4;
                 }
+                9 => {
+                    self.relative_base += self.get(1);
+                    self.ip += 2;
+                }
                 99 => {
                     self.done = true;
                     break;
@@ -95,50 +104,52 @@ impl CPU {
         }
     }
 
-    fn opcode(&self) -> u16 {
-        return (self.read(self.ip) % 100) as u16;
+    fn opcode(&self) -> u8 {
+        return (self.read(self.ip) % 100) as u8;
     }
 
     fn mode(&self, offset: usize) -> u8 {
         let val = self.read(self.ip) / 100;
-        return (val / 10i32.pow((offset - 1) as u32) % 10) as u8;
+        return (val / 10_i64.pow((offset - 1) as u32) % 10) as u8;
     }
 
-    fn get(&self, offset: usize) -> i32 {
+    fn get(&self, offset: usize) -> i64 {
         let value = self.read(self.ip + offset);
         return match self.mode(offset) {
-            0 => self.read(value as usize),
-            1 => value,
+            0 => self.read(value as usize),                        // position
+            1 => value,                                            // value
+            2 => self.read((self.relative_base + value) as usize), // relative
             _ => panic!(self.read(self.ip)),
         };
     }
 
-    fn put(&mut self, offset: usize, value: i32) {
+    fn put(&mut self, offset: usize, value: i64) {
         self.write(self.read(self.ip + offset) as usize, value);
     }
 
-    fn input(&mut self) -> i32 {
+    fn input(&mut self) -> i64 {
         //println!("Input is {}", self.inputs[0]);
         return self.inputs.remove(0);
     }
 
-    fn output(&mut self, value: i32) {
+    fn output(&mut self, value: i64) {
         //println!("output: {}", value);
-        self.output = value
+        self.outputs.push(value);
     }
 
-    fn read(&self, addr: usize) -> i32 {
-        //println!("Reading {} @{}", self.mem[addr], addr);
-        return self.mem[addr];
+    fn read(&self, addr: usize) -> i64 {
+        println!("Reading {} @{}", self.mem[addr], addr);
+        return self.mem.get(addr).copied().unwrap_or(0);
     }
 
-    fn write(&mut self, addr: usize, value: i32) {
-        //println!("Writing {} to {}", value, addr);
+    fn write(&mut self, addr: usize, value: i64) {
+        println!("Writing {} to {}", value, addr);
+        self.mem.resize(self.mem.len().max(addr + 1), 0);
         self.mem[addr] = value;
     }
 }
 
-pub fn process(program: &mut Vec<i32>) -> i32 {
+pub fn process(program: &mut Vec<i64>) -> Option<i64> {
     let mut cpu = CPU::new(program);
     cpu.run();
     let res = cpu.starve();
