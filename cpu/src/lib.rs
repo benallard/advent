@@ -124,7 +124,12 @@ impl CPU {
     }
 
     fn put(&mut self, offset: usize, value: i64) {
-        self.write(self.read(self.ip + offset) as usize, value);
+        let addr = self.read(self.ip + offset);
+        match self.mode(offset) {
+            0 => self.write(addr as usize, value),
+            2 => self.write((self.relative_base + addr) as usize, value),
+            _ => panic!(self.read(self.ip)),
+        }
     }
 
     fn input(&mut self) -> i64 {
