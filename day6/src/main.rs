@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::iter::Iterator;
 
 fn main() {
     let orbits = parse_orbits(include_str!("../../day6.txt").lines().collect());
