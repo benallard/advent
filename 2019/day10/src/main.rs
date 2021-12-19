@@ -10,6 +10,8 @@ fn gcd(a: i32, b: i32) -> i32 {
     a
 }
 
+const I_TH: i32 = 200;
+
 #[derive(Clone, PartialEq, Eq)]
 enum MapSpot {
     Empty,
@@ -91,6 +93,13 @@ impl Map {
         return self.count_asteroids();
     }
 
+    pub fn cleanup(&mut self, start_x:usize, start_y: usize) -> usize {
+        let lastCoord: Coord;
+        for _ in 0..I_TH+1 {
+        }
+        return lastCoord.0 * 100 + lastCoord.1;
+    }
+
     fn mark_hidden(&mut self, start_x: usize, start_y: usize, x: usize, y: usize) {
         println!("Analysing {}, {}", x, y);
         if x == start_x && y == start_y {
@@ -150,7 +159,7 @@ fn count_reachable(map: &Map, start_x: usize, start_y: usize) -> u32 {
 
 type Coord = (usize, usize);
 
-fn part1(map: Map) -> u32 {
+fn part1(map: &Map) -> u32 {
     println!("Map is: ");
     map.print();
     let mut res: Coord = (999, 999);
@@ -172,9 +181,14 @@ fn part1(map: Map) -> u32 {
     return max;
 }
 
+fn part2(map: &Map) -> u32{
+0
+}
+
 fn main() {
     let map = parse_map(include_str!("../../day10.txt"));
-    println!("Max: {}", part1(map));
+    println!("Max: {}", part1(&map));
+    println!("200th: {}", part2(&map));
 }
 
 #[test]
