@@ -99,7 +99,7 @@ impl CPU {
                     self.done = true;
                     break;
                 }
-                _ => panic!(self.read(self.ip)),
+                _ => panic!("{}", self.read(self.ip)),
             }
         }
     }
@@ -119,7 +119,7 @@ impl CPU {
             0 => self.read(value as usize),                        // position
             1 => value,                                            // value
             2 => self.read((self.relative_base + value) as usize), // relative
-            _ => panic!(self.read(self.ip)),
+            _ => panic!("{}", self.read(self.ip)),
         };
     }
 
@@ -128,7 +128,7 @@ impl CPU {
         match self.mode(offset) {
             0 => self.write(addr as usize, value),
             2 => self.write((self.relative_base + addr) as usize, value),
-            _ => panic!(self.read(self.ip)),
+            _ => panic!("{}", self.read(self.ip)),
         }
     }
 
