@@ -19,7 +19,11 @@ fn main() {
         })
         .filter(|val| val.is_some())
         .map(|val| val.unwrap());
-    println!("max: {}", dwarfs.max().unwrap());
-    //let dwarfes = dwarfs.collect().sort().
-
+    // uncomment, and comment the rest for part 1
+    //println!("max: {}", dwarfs.max().unwrap());
+    let mut sorted = dwarfs.collect::<Vec<_>>();
+    sorted.sort();
+    sorted.reverse();
+    let top3 = sorted[..3].iter().fold(0, |a, b| a + b);
+    println!("top3: {}", top3);
 }
