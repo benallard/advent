@@ -1,27 +1,26 @@
 use std::io::BufRead;
 
 fn main() {
-    let mut max = 0;
     let mut current = 0;
 
-    std::io::BufReader::new(std::io::stdin())
+    let max = std::io::BufReader::new(std::io::stdin())
         .lines()
-        .for_each(|line| {
-            let value: Result<u32, _> = line.unwrap().trim().parse::<u32>();
+        .map(|line| line.unwrap().trim().parse::<u32>())
+        .map(|value| {
             match value {
                 Ok(t) => {
                     current = current + t;
+                    None
                 }
                 Err(_) => {
-                    if current > max {
-                        max = current;
-                    }
+                    let val = current;
                     current = 0;
+                    Some(val)
                 }
             }
-        });
-    if current > max {
-        max = current;
-    }
+        })
+        .filter(|val| val.is_some())
+        .map(|val| val.unwrap())
+        .max().unwrap();
     println!("{}", max);
 }
