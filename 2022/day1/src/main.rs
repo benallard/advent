@@ -1,26 +1,25 @@
 use std::io::BufRead;
 
 fn main() {
-    let mut current = 0;
-
-    let max = std::io::BufReader::new(std::io::stdin())
+    let dwarfs = std::io::BufReader::new(std::io::stdin())
         .lines()
         .map(|line| line.unwrap().trim().parse::<u32>())
-        .map(|value| {
-            match value {
+        .scan(0, |state, x| {
+            match x {
                 Ok(t) => {
-                    current = current + t;
-                    None
+                    *state += t;
+                    Some(None)
                 }
                 Err(_) => {
-                    let val = current;
-                    current = 0;
-                    Some(val)
+                    let val = *state;
+                    *state = 0;
+                    Some(Some(val))
                 }
             }
         })
         .filter(|val| val.is_some())
-        .map(|val| val.unwrap())
-        .max().unwrap();
-    println!("{}", max);
+        .map(|val| val.unwrap());
+    println!("max: {}", dwarfs.max().unwrap());
+    //let dwarfes = dwarfs.collect().sort().
+
 }
