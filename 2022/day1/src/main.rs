@@ -7,21 +7,21 @@ fn main() {
     std::io::BufReader::new(std::io::stdin())
         .lines()
         .for_each(|line| {
-            let value = line.unwrap().trim().parse();
+            let value: Result<u32, _> = line.unwrap().trim().parse::<u32>();
             match value {
                 Ok(t) => {
                     current = current + t;
                 }
-                Err(r) => {
+                Err(_) => {
                     if current > max {
                         max = current;
-                        current = 0;
                     }
+                    current = 0;
                 }
             }
         });
     if current > max {
         max = current;
     }
-    println!(max);
+    println!("{}", max);
 }
