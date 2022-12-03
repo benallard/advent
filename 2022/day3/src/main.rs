@@ -5,7 +5,18 @@ use std::iter::FromIterator;
 fn main() {
     let sum = std::io::BufReader::new(std::io::stdin())
         .lines()
-        .map(|line| share(line.unwrap().trim()))
+        .map(|line| line.unwrap().trim().into())
+        .collect::<Vec<String>>()
+        //.map(|line| share(line.unwrap().trim()))
+        .chunks(3)
+        .map(|lines| {
+            let dwarf1:HashSet<_> = HashSet::from_iter(lines[0].chars().into_iter());
+            let dwarf2 = HashSet::from_iter(lines[1].chars().into_iter());
+            let dwarf3 = HashSet::from_iter(lines[2].chars().into_iter());
+            let common12 = dwarf1.intersection(&dwarf2).map(|c| *c).collect::<HashSet<_>>();
+            let mut common = common12.intersection(&dwarf3);
+            *common.next().unwrap()
+        })
         .map(|item| prio(item))
         .fold(0, |a, b| a + b);
     println!("sum: {}", sum)
@@ -19,6 +30,7 @@ fn share(content: &str) -> char{
 }
 
 fn prio(item: char) -> u32{
+    dbg!(item);
     match item {
         'a' ..= 'z' => item.to_digit(36).unwrap() - 9,
         'A' ..= 'Z' => item.to_digit(36).unwrap() - 9 + 26,
