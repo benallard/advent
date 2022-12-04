@@ -15,6 +15,7 @@ fn main() {
     println!("score: {}", score);
 }
 
+#[allow(dead_code)]
 fn calc_score_1(dwarf: char, me: char) -> i32{
     calc_score(dwarf, match me {
         'X' => 'A',

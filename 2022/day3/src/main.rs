@@ -22,6 +22,7 @@ fn main() {
     println!("sum: {}", sum)
 }
 
+#[allow(dead_code)]
 fn share(content: &str) -> char{
     let part1:HashSet<char> = HashSet::from_iter(content[..content.len() / 2].chars().into_iter());
     let part2:HashSet<char> = HashSet::from_iter(content[content.len() / 2..].chars().into_iter());
