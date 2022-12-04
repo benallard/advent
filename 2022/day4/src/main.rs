@@ -8,7 +8,10 @@ fn main(){
         .filter(|secs| {
             let elf1 = Section::from_str(&secs[0]).unwrap();
             let elf2 = Section::from_str(&secs[1]).unwrap();
-            elf1.is_subset(&elf2) || elf2.is_subset(&elf1)
+            // part 1
+            //elf1.is_subset(&elf2) || elf2.is_subset(&elf1)
+            // part 2
+            !elf1.is_disjoint(&elf2)
         })
         .count();
     println!("count: {}", amount);
@@ -38,5 +41,9 @@ impl FromStr for Section{
 impl Section{
     fn is_subset(&self, other:&Section) -> bool{
         self.from <= other.from && self.to >= other.to
+    }
+
+    fn is_disjoint(&self, other:&Section) -> bool{
+        self.to < other.from || self.from > other.to
     }
 }
