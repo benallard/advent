@@ -65,12 +65,11 @@ impl Ship{
     }
 
 
-    pub fn move_crates_2(&mut self, amount: u8, source: usize, dest:usize){
-        let mut values: Vec<_> = (0..amount)
-            .map(|_| self.stacks[source-1].pop())
-            .map(|c| c.unwrap())
+    pub fn move_crates_2(&mut self, amount: usize, source: usize, dest:usize){
+        let drain_start = self.stacks[source-1].len() - amount;
+        let mut values : Vec<_> = self.stacks[source-1]
+            .drain(drain_start..)
             .collect();
-        values.reverse();
         self.stacks[dest - 1].append(&mut values);
     }
 
