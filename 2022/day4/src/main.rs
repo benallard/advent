@@ -38,6 +38,7 @@ impl FromStr for Section{
     }
 }
 
+#[allow(dead_code)]
 impl Section{
     fn is_subset(&self, other:&Section) -> bool{
         self.from <= other.from && self.to >= other.to
