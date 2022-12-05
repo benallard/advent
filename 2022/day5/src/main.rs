@@ -28,8 +28,8 @@ fn main(){
         let amount = chunks[1 as usize].parse().unwrap();
         let source = chunks[3 as usize].parse().unwrap();
         let dest = chunks[5 as usize].parse().unwrap();
-        ship.move_crates(amount, source, dest);
-        
+        ship.move_crates_2(amount, source, dest);
+        println!(": {}", line);
         ship.draw();
     }
 
@@ -58,12 +58,19 @@ impl Ship{
         self.stacks[idx].insert(0, value);
     }
 
-    pub fn move_crates(&mut self, amount: u8, source: usize, dest:usize){
+
+    pub fn move_crates_2(&mut self, amount: u8, source: usize, dest:usize){
+        let mut values = (0..amount).map(|_| self.stacks[source-1].pop()).map(|c| c.unwrap()).collect::<Vec<char>>();
+        values.reverse();
+        self.stacks[dest - 1].append(&mut values);
+    }
+
+    pub fn move_crates_1(&mut self, amount: u8, source: usize, dest:usize){
         for _ in 0..amount{
             self.move_crate(source, dest);
         }
     }
-
+    
     pub fn move_crate(&mut self, source: usize, dest: usize){
         let value = self.stacks[source-1].pop().unwrap();
         self.stacks[dest-1].push(value);
