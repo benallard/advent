@@ -2,7 +2,9 @@ use std::io::BufRead;
 
 fn main(){
     let lines:Vec<_> = std::io::BufReader::new(std::io::stdin())
-        .lines().map(|l| l.unwrap()).collect();
+        .lines()
+        .map(|l| l.unwrap())
+        .collect();
     let mut ship = Ship::new(lines[0].len() / 3);
     let mut end = 0;
     for line in &lines {
@@ -10,7 +12,10 @@ fn main(){
         if line.trim().len() == 0 {
             break;
         }
-        for (idx, char) in line.chars().collect::<Vec<char>>().chunks(4).enumerate(){
+        for (idx, char) in line.chars()
+                .collect::<Vec<char>>()
+                .chunks(4)
+                .enumerate(){
             if char[0] == '[' {
                 ship.add_crate(char[1], idx);
             }
@@ -42,6 +47,7 @@ struct Ship {
     stacks : Vec<Vec<char>>,
 }
 
+#[allow(dead_code)]
 impl Ship{
     pub fn new(stacksize: usize) -> Ship{
         let mut stacks = Vec::with_capacity(stacksize);
@@ -60,7 +66,10 @@ impl Ship{
 
 
     pub fn move_crates_2(&mut self, amount: u8, source: usize, dest:usize){
-        let mut values = (0..amount).map(|_| self.stacks[source-1].pop()).map(|c| c.unwrap()).collect::<Vec<char>>();
+        let mut values: Vec<_> = (0..amount)
+            .map(|_| self.stacks[source-1].pop())
+            .map(|c| c.unwrap())
+            .collect();
         values.reverse();
         self.stacks[dest - 1].append(&mut values);
     }
@@ -70,14 +79,18 @@ impl Ship{
             self.move_crate(source, dest);
         }
     }
-    
+
     pub fn move_crate(&mut self, source: usize, dest: usize){
         let value = self.stacks[source-1].pop().unwrap();
         self.stacks[dest-1].push(value);
     }
 
     pub fn tops(&self) -> String{
-        self.stacks.iter().map(|s| s.last()).filter(|c| c.is_some()).map(|c| c.unwrap()).collect()
+        self.stacks.iter()
+            .map(|s| s.last())
+            .filter(|c| c.is_some())
+            .map(|c| c.unwrap())
+            .collect()
     }
 
     pub fn draw(&self){
