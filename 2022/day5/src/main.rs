@@ -4,7 +4,9 @@ fn main(){
     let lines:Vec<_> = std::io::BufReader::new(std::io::stdin())
         .lines().map(|l| l.unwrap()).collect();
     let mut ship = Ship::new(lines[0].len() / 3);
-    for line in lines {
+    let mut end = 0;
+    for line in &lines {
+        end += 1;
         if line.trim().len() == 0 {
             break;
         }
@@ -17,9 +19,23 @@ fn main(){
 
     ship.draw();
 
+    for line in &lines[end..]{
+        // 'move 1 from 2 to 1'
+        let chunks: Vec<_> = line.split(" ").collect();
+        if chunks[0] != "move"{
+            continue;
+        }
+        let amount = chunks[1 as usize].parse().unwrap();
+        let source = chunks[3 as usize].parse().unwrap();
+        let dest = chunks[5 as usize].parse().unwrap();
+        ship.move_crates(amount, source, dest);
+        
+        ship.draw();
+    }
 
+    ship.draw();
 
-
+    println!("tops: {}", ship.tops())
 }
 
 struct Ship {
@@ -39,8 +55,22 @@ impl Ship{
 
     pub fn add_crate(&mut self, value: char, idx: usize){
         // Crates are initialized from the top
-        dbg!(value, idx);
         self.stacks[idx].insert(0, value);
+    }
+
+    pub fn move_crates(&mut self, amount: u8, source: usize, dest:usize){
+        for _ in 0..amount{
+            self.move_crate(source, dest);
+        }
+    }
+
+    pub fn move_crate(&mut self, source: usize, dest: usize){
+        let value = self.stacks[source-1].pop().unwrap();
+        self.stacks[dest-1].push(value);
+    }
+
+    pub fn tops(&self) -> String{
+        self.stacks.iter().map(|s| s.last()).filter(|c| c.is_some()).map(|c| c.unwrap()).collect()
     }
 
     pub fn draw(&self){
