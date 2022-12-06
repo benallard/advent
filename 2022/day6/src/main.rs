@@ -2,7 +2,7 @@ use std::io::Read;
 
 fn main() {
     let mut content = String::new();
-    std::io::BufReader::new(std::io::stdin()).read_to_string(&mut content);
+    std::io::BufReader::new(std::io::stdin()).read_to_string(&mut content).unwrap();
     let pos = get_start(&content);
     println!("start: {}", pos);
 }
