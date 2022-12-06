@@ -1,10 +1,15 @@
-use std::io::BufRead;
-use std::str::FromStr;
+use std::{io::BufRead, str::FromStr};
 
-fn main(){
+fn main() {
     let amount = std::io::BufReader::new(std::io::stdin())
         .lines()
-        .map(|line| line.unwrap().trim().split(",").map(|s| s.to_string()).collect::<Vec<String>>())
+        .map(|line| {
+            line.unwrap()
+                .trim()
+                .split(",")
+                .map(|s| s.to_string())
+                .collect::<Vec<String>>()
+        })
         .filter(|secs| {
             let elf1 = Section::from_str(&secs[0]).unwrap();
             let elf2 = Section::from_str(&secs[1]).unwrap();
@@ -17,12 +22,12 @@ fn main(){
     println!("count: {}", amount);
 }
 
-struct Section{
+struct Section {
     from: u32,
     to: u32,
 }
 
-impl FromStr for Section{
+impl FromStr for Section {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, <Self as FromStr>::Err> {
@@ -39,12 +44,12 @@ impl FromStr for Section{
 }
 
 #[allow(dead_code)]
-impl Section{
-    fn is_subset(&self, other:&Section) -> bool{
+impl Section {
+    fn is_subset(&self, other: &Section) -> bool {
         self.from <= other.from && self.to >= other.to
     }
 
-    fn is_disjoint(&self, other:&Section) -> bool{
+    fn is_disjoint(&self, other: &Section) -> bool {
         self.to < other.from || self.from > other.to
     }
 }

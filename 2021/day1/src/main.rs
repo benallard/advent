@@ -13,5 +13,4 @@ fn main() {
         .windows(2)
         .fold(0, |acc, w| acc + (w[1] > w[0]) as u64);
     println!("{}", res);
-
 }

@@ -10,10 +10,13 @@ fn main() {
         //.map(|line| share(line.unwrap().trim()))
         .chunks(3)
         .map(|lines| {
-            let dwarf1:HashSet<_> = HashSet::from_iter(lines[0].chars().into_iter());
+            let dwarf1: HashSet<_> = HashSet::from_iter(lines[0].chars().into_iter());
             let dwarf2 = HashSet::from_iter(lines[1].chars().into_iter());
             let dwarf3 = HashSet::from_iter(lines[2].chars().into_iter());
-            let common12 = dwarf1.intersection(&dwarf2).map(|c| *c).collect::<HashSet<_>>();
+            let common12 = dwarf1
+                .intersection(&dwarf2)
+                .map(|c| *c)
+                .collect::<HashSet<_>>();
             let mut common = common12.intersection(&dwarf3);
             *common.next().unwrap()
         })
@@ -23,25 +26,24 @@ fn main() {
 }
 
 #[allow(dead_code)]
-fn share(content: &str) -> char{
-    let part1:HashSet<char> = HashSet::from_iter(content[..content.len() / 2].chars().into_iter());
-    let part2:HashSet<char> = HashSet::from_iter(content[content.len() / 2..].chars().into_iter());
+fn share(content: &str) -> char {
+    let part1: HashSet<char> = HashSet::from_iter(content[..content.len() / 2].chars().into_iter());
+    let part2: HashSet<char> = HashSet::from_iter(content[content.len() / 2..].chars().into_iter());
     let mut common = part1.intersection(&part2);
     *common.next().unwrap()
 }
 
-fn prio(item: char) -> u32{
+fn prio(item: char) -> u32 {
     dbg!(item);
     match item {
-        'a' ..= 'z' => item.to_digit(36).unwrap() - 9,
-        'A' ..= 'Z' => item.to_digit(36).unwrap() - 9 + 26,
-        _ => panic!()
+        'a'..='z' => item.to_digit(36).unwrap() - 9,
+        'A'..='Z' => item.to_digit(36).unwrap() - 9 + 26,
+        _ => panic!(),
     }
-    
 }
 
 #[test]
-fn testpart1(){
+fn testpart1() {
     assert_eq!('p', share("vJrwpWtwJgWrhcsFMMfFFhFp"));
     assert_eq!(16, prio('p'));
     assert_eq!('L', share("jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL"));
