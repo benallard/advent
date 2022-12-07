@@ -1,23 +1,32 @@
 use std::io::BufRead;
 
 fn main(){
-    let root = Dir::new("/", None);
+    // special one, create manually
+    let root = Dir::root();
     let mut current = &root;
     std::io::BufReader::new(std::io::stdin())
         .lines()
         .map(|l| l.unwrap().trim().into())
         .for_each(|l: String| {
-            match l.chars().nth(0).unwrap(){
-                '$' => {
-                    let command: Vec<_> = l.split(" ").collect();
-                    match command[1]{
-                        "cd" => current = current.get_dir(command[2]).unwrap(),
-                        //"ls" =>,
+            let tokens: Vec<_> = l.split(" ").collect();
+            match tokens[0]{
+                "$" => {
+                    match tokens[1]{
+                        "cd" => current = match tokens[2]{
+                            "/" => &root,
+                            "." => current,
+                            ".." => &mut current.get_parent(),
+                            _ => &mut current.get_dir(tokens[2]).unwrap(),
+                        },
+                        "ls" => (), // do nothing
                         _ => panic!(),
-                    }
-                }
+                    };
+                },
+                // Assume all answers are from `ls`
+                "dir" => current.add_dir(tokens[1]),
                 _ => {
-                    
+                    let size = tokens[0].parse().unwrap();
+                    current.add_file(tokens[1], size);
                 }
             }
         })
@@ -32,22 +41,53 @@ struct Dir{
 }
 
 impl Dir {
-    fn new(name: &str, parent: Option<Box<Dir>>) -> Dir{
+    fn root() -> Dir{
+        let mut res = Dir{ 
+            name: "/".to_string(),
+            parent: None,
+            files: vec!(),
+            dirs: vec!(),
+        };
+        res.parent = Some(Box::new(res));
+        return res;
+    }
+
+    fn new(name: &str, parent: &Dir) -> Dir{
         Dir {
             name: name.to_string(),
-            parent: parent,
+            parent: Some(Box::new(*parent)),
             files: vec!(),
             dirs: vec!(),
         }
     }
 
+    fn get_parent(&self) -> &Dir{
+        &self.parent.unwrap()
+    }
+
     fn get_dir(&self, name: &str) -> Option<&Dir>{
         self.dirs.iter().find(|d| d.name == name)
+    }
+
+    fn add_dir(&mut self, name: &str){
+        self.dirs.push(Dir::new(name, self))
+    }
+
+    fn add_file(&mut self, name: &str, size: u32){
+        self.files.push(File::new(name, size))
     }
 }
 
 struct File{
     name: String,
-    size: i32,
-    parent: Dir,
+    size: u32,
+}
+
+impl File{
+    fn new(name: &str, size: u32) -> File{
+        File{
+            name: name.to_string(),
+            size
+        }
+    }
 }
