@@ -1,6 +1,7 @@
+use std::cell::RefCell;
 use std::io::BufRead;
 
-fn main(){
+fn main() {
     // special one, create manually
     let root = Dir::root();
     let mut current = &root;
@@ -9,19 +10,21 @@ fn main(){
         .map(|l| l.unwrap().trim().into())
         .for_each(|l: String| {
             let tokens: Vec<_> = l.split(" ").collect();
-            match tokens[0]{
+            match tokens[0] {
                 "$" => {
-                    match tokens[1]{
-                        "cd" => current = match tokens[2]{
-                            "/" => &root,
-                            "." => current,
-                            ".." => &mut current.get_parent(),
-                            _ => &mut current.get_dir(tokens[2]).unwrap(),
-                        },
+                    match tokens[1] {
+                        "cd" => {
+                            current = match tokens[2] {
+                                "/" => &root,
+                                "." => current,
+                                ".." => &mut current.get_parent(),
+                                _ => &mut current.get_dir(tokens[2]).unwrap(),
+                            }
+                        }
                         "ls" => (), // do nothing
                         _ => panic!(),
                     };
-                },
+                }
                 // Assume all answers are from `ls`
                 "dir" => current.add_dir(tokens[1]),
                 _ => {
@@ -30,64 +33,82 @@ fn main(){
                 }
             }
         })
-
 }
 
-struct Dir{
+struct Dir {
     name: String,
-    parent: Option<Box<Dir>>,
+    parent: Option<RefCell<Box<Dir>>>,
     files: Vec<File>,
     dirs: Vec<Dir>,
 }
 
 impl Dir {
-    fn root() -> Dir{
-        let mut res = Dir{ 
+    fn root() -> Self {
+        let mut res = Self {
             name: "/".to_string(),
             parent: None,
-            files: vec!(),
-            dirs: vec!(),
+            files: vec![],
+            dirs: vec![],
         };
-        res.parent = Some(Box::new(res));
+        let parent = Some(RefCell::new(Box::new(res)));
+        res.parent = parent;
         return res;
     }
 
-    fn new(name: &str, parent: &Dir) -> Dir{
-        Dir {
+    fn new(name: &str, parent: &mut Self) -> Self {
+        Self {
             name: name.to_string(),
-            parent: Some(Box::new(*parent)),
-            files: vec!(),
-            dirs: vec!(),
+            parent: Some(RefCell::new(Box::new(*parent))),
+            files: vec![],
+            dirs: vec![],
         }
     }
 
-    fn get_parent(&self) -> &Dir{
-        &self.parent.unwrap()
+    fn get_parent(&mut self) -> &Self {
+        &self.parent.as_mut().unwrap().borrow()
     }
 
-    fn get_dir(&self, name: &str) -> Option<&Dir>{
+    fn get_dir(&self, name: &str) -> Option<&Self> {
         self.dirs.iter().find(|d| d.name == name)
     }
 
-    fn add_dir(&mut self, name: &str){
-        self.dirs.push(Dir::new(name, self))
+    fn add_dir(&mut self, name: &str) {
+        let sub_dir = Dir::new(name, self);
+        self.dirs.push(sub_dir)
     }
 
-    fn add_file(&mut self, name: &str, size: u32){
+    fn add_file(&mut self, name: &str, size: u32) {
         self.files.push(File::new(name, size))
     }
 }
 
-struct File{
+struct File {
     name: String,
     size: u32,
 }
 
-impl File{
-    fn new(name: &str, size: u32) -> File{
-        File{
+impl File {
+    fn new(name: &str, size: u32) -> File {
+        File {
             name: name.to_string(),
-            size
+            size,
         }
+    }
+}
+
+trait Sizeable{
+    fn get_size(&self) -> u64;
+}
+
+impl Sizeable for Dir {
+    fn get_size(&self) -> u64{
+        self.dirs.iter().map(|d| d.get_size()).sum::<u64>()
+            + self.files.iter().map(|f| f.get_size()).sum::<u64>()
+    }
+}
+
+impl Sizeable for File {
+    fn get_size(&self) -> u64{
+        self.size.into()
     }
 }
