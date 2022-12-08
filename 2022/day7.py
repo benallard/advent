@@ -64,7 +64,8 @@ def main(file):
             size = int(tokens[0])
             current.add_subfile(tokens[1], size)
     
-    print("total size: ", ROOT.get_size())
+    total = ROOT.get_size()
+    print("total size: ", total)
 
     # now, part 1:
     sum = 0
@@ -72,6 +73,18 @@ def main(file):
         if dir.get_size() < 100000:
             sum += dir.get_size()
     print("part 1: ", sum)
+
+    # part 2
+    free = 70000000 - total
+    min = 30000000 - free
+    best = 70000000
+    for dir in ROOT.all_dirs():
+        cur_size = dir.get_size()
+        if cur_size > min:
+            if cur_size < best:
+                best = cur_size
+    print("part 2:", best)
+
                 
 
 if __name__ == "__main__":
