@@ -2,10 +2,10 @@ use std::{collections::HashSet, io::BufRead};
 
 fn main() {
     let mut seen = HashSet::new();
-    let mut head = Position { x: 0, y: 0 };
-    let mut tail = Position { x: 0, y: 0 };
 
-    seen.insert(tail);
+    let mut rope = [Position { x: 0, y: 0 }; 10];
+
+    seen.insert(rope[9]);
 
     std::io::BufReader::new(std::io::stdin())
         .lines()
@@ -15,11 +15,12 @@ fn main() {
             let dir = tokens[0];
             let length = tokens[1].parse().unwrap();
             for _ in 0..length {
-                head.move_1(dir);
-                //dbg!((head.x, head.y));
-                tail.move_toward(&head);
-                //dbg!((tail.x, tail.y));
-                seen.insert(tail);
+                rope[0].move_1(dir);
+                for parts in rope.windows(2) {
+                    let mut tail = parts[1];
+                    tail.move_toward(&parts[0]);
+                }
+                seen.insert(rope[9]);
             }
         });
 
