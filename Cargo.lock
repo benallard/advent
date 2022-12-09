@@ -93,3 +93,7 @@ version = "0.1.0"
 dependencies = [
  "cpu",
 ]
+
+[[package]]
+name = "day9_22"
+version = "0.1.0"
