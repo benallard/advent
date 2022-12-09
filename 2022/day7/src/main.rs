@@ -17,8 +17,8 @@ fn main() {
                             current = match tokens[2] {
                                 "/" => &root,
                                 "." => current,
-                                ".." => &mut current.get_parent(),
-                                _ => &mut current.get_dir(tokens[2]).unwrap(),
+                                ".." => &current.get_parent(),
+                                _ => &current.get_dir(tokens[2]).unwrap(),
                             }
                         }
                         "ls" => (), // do nothing
@@ -26,13 +26,14 @@ fn main() {
                     };
                 }
                 // Assume all answers are from `ls`
-                "dir" => current.add_dir(tokens[1]),
+                "dir" => (&mut current).add_dir(tokens[1]),
                 _ => {
                     let size = tokens[0].parse().unwrap();
                     current.add_file(tokens[1], size);
                 }
             }
-        })
+        });
+    println!("size: {}", root.get_size());
 }
 
 struct Dir {
@@ -44,7 +45,7 @@ struct Dir {
 
 impl Dir {
     fn root() -> Self {
-        let mut res = Self {
+        let res = Self {
             name: "/".to_string(),
             parent: None,
             files: vec![],
@@ -73,7 +74,7 @@ impl Dir {
     }
 
     fn add_dir(&mut self, name: &str) {
-        let sub_dir = Dir::new(name, self);
+        let sub_dir = Dir::new(name, Box::new(self));
         self.dirs.push(sub_dir)
     }
 
@@ -96,19 +97,19 @@ impl File {
     }
 }
 
-trait Sizeable{
+trait Sizeable {
     fn get_size(&self) -> u64;
 }
 
 impl Sizeable for Dir {
-    fn get_size(&self) -> u64{
+    fn get_size(&self) -> u64 {
         self.dirs.iter().map(|d| d.get_size()).sum::<u64>()
             + self.files.iter().map(|f| f.get_size()).sum::<u64>()
     }
 }
 
 impl Sizeable for File {
-    fn get_size(&self) -> u64{
+    fn get_size(&self) -> u64 {
         self.size.into()
     }
 }
