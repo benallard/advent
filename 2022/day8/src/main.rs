@@ -25,6 +25,17 @@ fn main() {
         }
     }
     println!("visible: {}", sum);
+    let mut max = 0;
+    for y in 1..height - 1 {
+        for x in 1..width - 1 {
+            let score = scenic_score(&field, x, y);
+            if score > max {
+                //dbg!((x, y), score);
+                max = score;
+            }
+        }
+    }
+    println!("scenic core: {}", max);
 }
 
 fn visible(field: &Vec<Vec<u8>>, x: usize, y: usize) -> bool {
@@ -73,6 +84,76 @@ fn visible(field: &Vec<Vec<u8>>, x: usize, y: usize) -> bool {
             //dbg!("right");
             break;
         }
+    }
+    return res;
+}
+
+fn scenic_score(field: &Vec<Vec<u8>>, x: usize, y: usize) -> usize {
+    let self_height = field[y][x];
+    // top
+    let mut res = 1;
+    {
+        let mut lres = 0;
+        let mut lmax = 0;
+        for yy in (0..y).rev() {
+            if field[yy][x] >= lmax {
+                lres += 1;
+                lmax = field[yy][x];
+            }
+            if field[yy][x] >= self_height {
+                break;
+            }
+        }
+        //dbg!("top", lres);
+        res *= lres;
+    }
+    // left
+    {
+        let mut lres = 0;
+        let mut lmax = 0;
+        for xx in (0..x).rev() {
+            if field[y][xx] >= lmax {
+                lres += 1;
+                lmax = field[y][xx];
+            }
+            if field[y][xx] >= self_height {
+                break;
+            }
+        }
+        //dbg!("left", lres);
+        res *= lres;
+    }
+    // bottom
+    {
+        let mut lres = 0;
+        let mut lmax = 0;
+        for yy in (y + 1)..field.len() {
+            if field[yy][x] >= lmax {
+                lres += 1;
+                lmax = field[yy][x];
+            }
+            if field[yy][x] >= self_height {
+                break;
+            }
+        }
+        //dbg!("bottom", lres);
+        res *= lres;
+    }
+    // right
+    {
+        let mut lres = 0;
+        let mut lmax = 0;
+        for xx in (x + 1)..field[y].len() {
+            if field[y][xx] >= lmax {
+                lres += 1;
+                lmax = field[y][xx];
+            }
+            if field[y][xx] >= self_height {
+                break;
+            }
+        }
+        //dbg!("right", lres);
+        res *= lres;
     }
     return res;
 }
