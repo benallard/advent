@@ -94,12 +94,8 @@ fn scenic_score(field: &Vec<Vec<u8>>, x: usize, y: usize) -> usize {
     let mut res = 1;
     {
         let mut lres = 0;
-        let mut lmax = 0;
         for yy in (0..y).rev() {
-            if field[yy][x] >= lmax {
-                lres += 1;
-                lmax = field[yy][x];
-            }
+            lres += 1;
             if field[yy][x] >= self_height {
                 break;
             }
@@ -110,12 +106,8 @@ fn scenic_score(field: &Vec<Vec<u8>>, x: usize, y: usize) -> usize {
     // left
     {
         let mut lres = 0;
-        let mut lmax = 0;
         for xx in (0..x).rev() {
-            if field[y][xx] >= lmax {
-                lres += 1;
-                lmax = field[y][xx];
-            }
+            lres += 1;
             if field[y][xx] >= self_height {
                 break;
             }
@@ -126,12 +118,8 @@ fn scenic_score(field: &Vec<Vec<u8>>, x: usize, y: usize) -> usize {
     // bottom
     {
         let mut lres = 0;
-        let mut lmax = 0;
         for yy in (y + 1)..field.len() {
-            if field[yy][x] >= lmax {
-                lres += 1;
-                lmax = field[yy][x];
-            }
+            lres += 1;
             if field[yy][x] >= self_height {
                 break;
             }
@@ -142,12 +130,8 @@ fn scenic_score(field: &Vec<Vec<u8>>, x: usize, y: usize) -> usize {
     // right
     {
         let mut lres = 0;
-        let mut lmax = 0;
         for xx in (x + 1)..field[y].len() {
-            if field[y][xx] >= lmax {
-                lres += 1;
-                lmax = field[y][xx];
-            }
+            lres += 1;
             if field[y][xx] >= self_height {
                 break;
             }
