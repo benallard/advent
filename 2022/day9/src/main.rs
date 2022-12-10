@@ -18,7 +18,7 @@ fn main() {
                 rope[0].move_1(dir);
                 for idx in 0..rope.len() - 1 {
                     let head = rope[idx];
-                    let mut tail = &mut rope[idx + 1];
+                    let tail = &mut rope[idx + 1];
                     tail.move_toward(&head);
                 }
                 seen.insert(rope[9]);
@@ -77,16 +77,5 @@ impl Position {
                 };
             }
         }
-    }
-}
-
-// see https://users.rust-lang.org/t/iterator-over-mutable-windows-of-slice/17110/6
-fn windows_mut_each<T>(v: &mut [T], n: usize, mut f: impl FnMut(&mut [T])) {
-    let mut start = 0;
-    let mut end = n;
-    while end <= v.len() {
-        f(&mut v[start..end]);
-        start += 1;
-        end += 1;
     }
 }
