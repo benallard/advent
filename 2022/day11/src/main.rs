@@ -12,20 +12,24 @@ fn main() {
         .map(|c| c.join("\n").parse::<Monkey>().unwrap())
         .collect();
 
-    for i in 0..monkeys.len(){
-        let value;
-        let dest;
-        {
-            let item = monkeys[i].items.pop_front().unwrap();
-            let new = monkeys[i].operation.process(item);
-            let new = new / 3;
-            dest = monkeys[i].test.get_dest(new);
-            value = new;
+    for _round in 0..20 {
+        for i in 0..monkeys.len() {
+            while let Some(item) = monkeys[i].items.pop_front() {
+                let value;
+                let dest;
+                {
+                    let new = monkeys[i].operation.process(item);
+                    let new = new / 3;
+                    dest = monkeys[i].test.get_dest(new);
+                    value = new;
+                }
+                monkeys[dest].items.push_back(value);
+            }
         }
-        {
-            let dest_monkey = &mut monkeys.split_at_mut(dest).1[0];
-            dest_monkey.items.push_back(value);
-        }
+        monkeys
+            .iter()
+            .enumerate()
+            .for_each(|(i, m)| println!("{}: {:?}", i, m.items))
     }
 }
 
