@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 use std::io::BufRead;
 
 use core::str::FromStr;
@@ -10,10 +11,21 @@ fn main() {
         .chunks(7)
         .map(|c| c.join("\n").parse::<Monkey>().unwrap())
         .collect();
+
+    for i in 0..monkeys.len(){
+        let monkey = monkeys.get_mut(i).unwrap();
+        while let Some(item) = monkey.items.pop_front() {
+            let new = monkey.operation.process(item);
+            let new = new / 3;
+            let dest = monkey.test.get_dest(new);
+            let dest_monkey = &mut monkeys.split_at_mut(dest).1[0];
+            dest_monkey.items.push_back(new);
+        }
+    }
 }
 
 struct Monkey {
-    items: Vec<u32>,
+    items: VecDeque<u32>,
     operation: Operation,
     test: Test,
 }
@@ -82,6 +94,23 @@ impl FromStr for Operation {
     }
 }
 
+impl Operation {
+    fn process(&self, value: u32) -> u32 {
+        let op1 = match self.op1 {
+            Operand::Value => value,
+            Operand::Constant(v) => v,
+        };
+        let op2 = match self.op2 {
+            Operand::Value => value,
+            Operand::Constant(v) => v,
+        };
+        match self.op {
+            Op::Add => op1 + op2,
+            Op::Mul => op1 * op2,
+        }
+    }
+}
+
 struct Test {
     div: u8,
     positive: usize,
@@ -92,24 +121,46 @@ impl FromStr for Test {
     type Err = String;
     fn from_str(content: &str) -> Result<Self, <Self as FromStr>::Err> {
         let lines: Vec<_> = content.split("\n").collect();
-        if lines.len() != 3{
+        if lines.len() != 3 {
             return Err("wrong Test length".to_string());
         }
         let div;
         {
             let tokens: Vec<_> = lines[0].split(" ").collect();
-            if tokens[3] != "divisible"{
+            if tokens[3] != "divisible" {
                 return Err("Not divisible: ".to_owned() + tokens[2]);
             }
             div = tokens[5].parse().unwrap();
         }
-        let positive = lines[1].split(" ").collect::<Vec<_>>().last().unwrap().parse().unwrap();
-        let negative = lines[2].split(" ").collect::<Vec<_>>().last().unwrap().parse().unwrap();
-        Ok(Test{
+        let positive = lines[1]
+            .split(" ")
+            .collect::<Vec<_>>()
+            .last()
+            .unwrap()
+            .parse()
+            .unwrap();
+        let negative = lines[2]
+            .split(" ")
+            .collect::<Vec<_>>()
+            .last()
+            .unwrap()
+            .parse()
+            .unwrap();
+        Ok(Test {
             div,
             positive,
             negative,
         })
+    }
+}
+
+impl Test {
+    fn get_dest(&self, value: u32) -> usize {
+        if value % (self.div as u32) == 0 {
+            self.positive
+        } else {
+            self.negative
+        }
     }
 }
 
