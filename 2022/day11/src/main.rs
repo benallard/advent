@@ -13,13 +13,18 @@ fn main() {
         .collect();
 
     for i in 0..monkeys.len(){
-        let monkey = monkeys.get_mut(i).unwrap();
-        while let Some(item) = monkey.items.pop_front() {
-            let new = monkey.operation.process(item);
+        let value;
+        let dest;
+        {
+            let item = monkeys[i].items.pop_front().unwrap();
+            let new = monkeys[i].operation.process(item);
             let new = new / 3;
-            let dest = monkey.test.get_dest(new);
+            dest = monkeys[i].test.get_dest(new);
+            value = new;
+        }
+        {
             let dest_monkey = &mut monkeys.split_at_mut(dest).1[0];
-            dest_monkey.items.push_back(new);
+            dest_monkey.items.push_back(value);
         }
     }
 }
