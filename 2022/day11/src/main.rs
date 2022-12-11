@@ -24,19 +24,24 @@ fn main() {
                     value = new;
                 }
                 monkeys[dest].items.push_back(value);
+                monkeys[i].inspected +=1;
             }
         }
         monkeys
             .iter()
             .enumerate()
-            .for_each(|(i, m)| println!("{}: {:?}", i, m.items))
+            .for_each(|(i, m)| println!("{}: {}: {:?}", i, m.inspected, m.items))
     }
+    let mut inspected: Vec<_> = monkeys.iter().map(|m| m.inspected).collect();
+    inspected.sort();
+    println!("part1: {}", inspected.pop().unwrap() * inspected.pop().unwrap());
 }
 
 struct Monkey {
-    items: VecDeque<u32>,
+    items: VecDeque<u64>,
     operation: Operation,
     test: Test,
+    inspected: u32,
 }
 
 impl FromStr for Monkey {
@@ -59,6 +64,7 @@ impl FromStr for Monkey {
             items,
             operation,
             test,
+            inspected: 0,
         })
     }
 }
@@ -69,7 +75,7 @@ enum Op {
 }
 
 enum Operand {
-    Constant(u32),
+    Constant(u64),
     Value,
 }
 
@@ -104,7 +110,7 @@ impl FromStr for Operation {
 }
 
 impl Operation {
-    fn process(&self, value: u32) -> u32 {
+    fn process(&self, value: u64) -> u64 {
         let op1 = match self.op1 {
             Operand::Value => value,
             Operand::Constant(v) => v,
@@ -164,8 +170,8 @@ impl FromStr for Test {
 }
 
 impl Test {
-    fn get_dest(&self, value: u32) -> usize {
-        if value % (self.div as u32) == 0 {
+    fn get_dest(&self, value: u64) -> usize {
+        if value % (self.div as u64) == 0 {
             self.positive
         } else {
             self.negative
