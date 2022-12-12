@@ -12,29 +12,55 @@ fn main() {
         .map(|c| c.join("\n").parse::<Monkey>().unwrap())
         .collect();
 
-    for _round in 0..20 {
+    let lcm = monkeys
+        .iter()
+        .map(|m| m.test.div as u64)
+        .reduce(|a, b| a * b / gcd(a, b))
+        .unwrap();
+    println!("lcm: {}", lcm);
+
+    for _round in 0..10000 {
         for i in 0..monkeys.len() {
             while let Some(item) = monkeys[i].items.pop_front() {
                 let value;
                 let dest;
                 {
                     let new = monkeys[i].operation.process(item);
-                    let new = new / 3;
+                    let new = new % lcm;
                     dest = monkeys[i].test.get_dest(new);
                     value = new;
                 }
                 monkeys[dest].items.push_back(value);
-                monkeys[i].inspected +=1;
+                monkeys[i].inspected += 1;
             }
         }
+        /*
         monkeys
             .iter()
             .enumerate()
             .for_each(|(i, m)| println!("{}: {}: {:?}", i, m.inspected, m.items))
+            */
     }
     let mut inspected: Vec<_> = monkeys.iter().map(|m| m.inspected).collect();
     inspected.sort();
-    println!("part1: {}", inspected.pop().unwrap() * inspected.pop().unwrap());
+    println!(
+        "part1: {}",
+        inspected.pop().unwrap() as u128 * inspected.pop().unwrap() as u128
+    );
+}
+
+pub fn gcd(a: u64, b: u64) -> u64 {
+    let (mut a, mut b) = if a > b { (a, b) } else { (b, a) };
+
+    while b != 0 {
+        let temp = a;
+        a = b;
+        b = temp;
+
+        b %= a;
+    }
+
+    a
 }
 
 struct Monkey {
@@ -75,7 +101,7 @@ enum Op {
 }
 
 enum Operand {
-    Constant(u64),
+    Constant(u8),
     Value,
 }
 
@@ -113,11 +139,11 @@ impl Operation {
     fn process(&self, value: u64) -> u64 {
         let op1 = match self.op1 {
             Operand::Value => value,
-            Operand::Constant(v) => v,
+            Operand::Constant(v) => v as u64,
         };
         let op2 = match self.op2 {
             Operand::Value => value,
-            Operand::Constant(v) => v,
+            Operand::Constant(v) => v as u64,
         };
         match self.op {
             Op::Add => op1 + op2,
