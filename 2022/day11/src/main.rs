@@ -206,6 +206,6 @@ impl Test {
 }
 
 #[test]
-fn testParse() {
+fn test_parse() {
     "new = old * 19".parse::<Operation>().unwrap();
 }
