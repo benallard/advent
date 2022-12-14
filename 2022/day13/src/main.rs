@@ -7,8 +7,10 @@ fn main(){
         .collect::<Vec<String>>()
         .chunks(3)
         .map(|c| PacketPair::new(&c[0], &c[1]))
-        .filter(|pp| pp.is_sorted())
-        .count();
+        .enumerate()
+        .filter(|(i, pp)| pp.is_sorted())
+        .map(|(i, pp)| i)
+        .sum::<usize>();
     println!("count: {}", part1);
 }
 
