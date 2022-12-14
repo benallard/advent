@@ -9,7 +9,7 @@ fn main() {
         .map(|c| PacketPair::new(&c[0], &c[1]))
         .enumerate()
         .filter(|(_, pp)| pp.is_sorted())
-        .map(|(i, _)| i)
+        .map(|(i, _)| i + 1)
         .sum::<usize>();
     println!("count: {}", part1);
 }
