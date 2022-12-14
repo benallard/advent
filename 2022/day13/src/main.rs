@@ -1,10 +1,12 @@
 use std::{io::BufRead, str::FromStr};
 
 fn main() {
-    let part1 = std::io::BufReader::new(std::io::stdin())
+    let lines = std::io::BufReader::new(std::io::stdin())
         .lines()
         .map(|l| l.unwrap().trim().into())
-        .collect::<Vec<String>>()
+        .collect::<Vec<String>>();
+
+    let part1 = lines
         .chunks(3)
         .map(|c| PacketPair::new(&c[0], &c[1]))
         .enumerate()
@@ -12,9 +14,33 @@ fn main() {
         .map(|(i, _)| i + 1)
         .sum::<usize>();
     println!("count: {}", part1);
+
+    let mut packets: Vec<Packet> = lines
+        .iter()
+        .filter(|l| l.len() != 0)
+        .map(|l| l.parse().unwrap())
+        .collect();
+
+    let div2 = "[[2]]".parse().unwrap();
+    let div6 = "[[6]]".parse().unwrap();
+
+    packets.push(div2);
+    packets.push(div6);
+
+    packets.sort();
+
+    // create again, for comparing ?!
+    let ddiv2: Packet = "[[2]]".parse().unwrap();
+    let ddiv6: Packet = "[[6]]".parse().unwrap();
+
+    let idx_2 = packets.iter().position(|p| p == &ddiv2).unwrap() + 1;
+    let idx_6 = packets.iter().position(|p| p == &ddiv6).unwrap() + 1;
+
+    println!("part2: {}", idx_2 * idx_6);
+
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Eq, Ord)]
 enum PacketValue {
     Value(u32), // terminal
     Deeper(Packet),
@@ -38,7 +64,7 @@ impl PartialOrd for PacketValue {
     }
 }
 
-#[derive(PartialOrd, PartialEq, Debug)]
+#[derive(PartialOrd, PartialEq, Debug, Ord, Eq)]
 struct Packet {
     value: Vec<PacketValue>,
 }
