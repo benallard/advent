@@ -1,7 +1,7 @@
 use std::{io::BufRead, str::FromStr};
 
 fn main() {
-    let cave = Cave {
+    let mut cave = Cave {
         state: vec![vec![Tile::Air; 1000]; 1000],
     };
     std::io::BufReader::new(std::io::stdin())
@@ -12,7 +12,7 @@ fn main() {
                 .map(|p| p.parse().unwrap())
                 .collect::<Vec<_>>()
                 .windows(2)
-                .for_each(|w| cave.add_wall(w[0], w[1]))
+                .for_each(|w| cave.add_wall(&w[0], &w[1]))
         })
 }
 
@@ -45,12 +45,15 @@ struct Cave {
 }
 
 impl Cave {
-    fn add_wall(&mut self, a: Point, b: Point) {
+    fn add_wall(&mut self, a: &Point, b: &Point) {
         if a.x != b.x && a.y != b.y{
             panic!("diag!")
-        }
+        } else
         if a.x == b.x{
-            (a.y..=b.y).into_iter().for_each(|y| state[y][x] = true)
+            (a.y..=b.y).into_iter().for_each(|y| self.state[y][a.x] = Tile::Rock);
+        } else
+        if a.y == b.y {
+            (a.x..=b.x).into_iter().for_each(|x| self.state[a.y][x] = Tile::Rock);
         }
     }
 
