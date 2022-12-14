@@ -37,7 +37,6 @@ fn main() {
     let idx_6 = packets.iter().position(|p| p == &ddiv6).unwrap() + 1;
 
     println!("part2: {}", idx_2 * idx_6);
-
 }
 
 #[derive(PartialEq, Debug, Eq, Ord)]
