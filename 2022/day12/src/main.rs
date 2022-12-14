@@ -17,7 +17,7 @@ fn main() {
                     }
                     'E' => {
                         end = Point { x, y };
-                        26
+                        25
                     }
                     _ => c.to_digit(36).unwrap() as u8 - 10,
                 })
@@ -94,15 +94,16 @@ fn main() {
             }
         }
     }
-
-    dist.iter().for_each(|l| {
-        l.iter().for_each(|d| print!(" {:#4}", d));
+/*
+    dist.iter().enumerate().for_each(|(y,l)| {
+        l.iter().enumerate().for_each(|(x, d)| print!(" {:#4}-{:#2}", d, field[y][x]));
         println!("");
     });
-
+*/
     println!("part1: {}", dist[end.y][end.x]);
 }
 
+#[derive(PartialEq)]
 struct Point {
     x: usize,
     y: usize,
