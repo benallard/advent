@@ -42,12 +42,12 @@ impl FromStr for Sensor {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let parts = s.split(" ").collect::<Vec<_>>();
-        dbg!(parts[2][2..parts[2].len() - 1].to_owned());
+        //dbg!(parts[2][2..parts[2].len() - 1].to_owned());
         let x: isize = parts[2][2..parts[2].len() - 1].parse().unwrap();
         let y: isize = parts[3][2..parts[3].len() - 1].parse().unwrap();
         let xb: isize = parts[8][2..parts[8].len() - 1].parse().unwrap();
         let yb: isize = parts[9][2..].parse().unwrap();
-        dbg!(xb, yb);
+        //dbg!(xb, yb);
         Ok(Self {
             x,
             y,
@@ -73,18 +73,18 @@ struct Map {
 
 impl Map {
     fn part1(&self, y: isize) -> usize {
-        self.sensors
+        let (left, right) = self.sensors
             .iter()
             .filter(|s| s.in_range(y))
-            .flat_map(|s| {
+            .map(|s| {
                 let x_dist: isize = (s.beacon_dist() - s.y.abs_diff(y)) as isize;
                 let left = s.x - x_dist;
                 let right = s.x + x_dist;
-                left..=right
+                (left, right)
             })
-            .collect::<HashSet<_>>()
-            .iter()
-            .count()
+            .reduce(|a, b| (isize::min(a.0, b.0), isize::max(a.1, b.1)))
+            .unwrap();
+        right.abs_diff(left) + 1
     }
 
     fn part1_2(&self, y: isize) -> usize{
