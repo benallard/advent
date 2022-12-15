@@ -7,7 +7,24 @@ fn main() {
         .map(|l| l.unwrap().trim().to_owned())
         .for_each(|l| map.sensors.push(l.parse().unwrap()));
 
-    println!("part1: {}", map.part1(2000000) - map.part1_2(2000000));
+    let val = 10; // test
+    let val = 2000000;
+
+    let (left, right) = map.part1(val);
+    println!(
+        "part1: {}",
+        right.abs_diff(left) + 1 - map.beacon_amount(val)
+    );
+
+    let val = 20; // test
+    let val = 4000000;
+
+    for y in 0..val{
+        if let Some(b) = map.part_2(y){
+            println!("part2: {}", b.x*4000000 + b.y);
+            break;
+        }
+    }
 }
 
 fn man_dist(x1: isize, y1: isize, x2: isize, y2: isize) -> usize {
@@ -15,7 +32,7 @@ fn man_dist(x1: isize, y1: isize, x2: isize, y2: isize) -> usize {
 }
 
 #[derive(Hash, Eq, PartialEq)]
-struct Beacon{
+struct Beacon {
     x: isize,
     y: isize,
 }
@@ -27,13 +44,19 @@ struct Sensor {
 }
 
 impl Sensor {
-
-    fn beacon_dist(&self) -> usize{
+    fn beacon_dist(&self) -> usize {
         man_dist(self.x, self.y, self.nearest_beacon.x, self.nearest_beacon.y)
     }
 
     fn in_range(&self, y: isize) -> bool {
         self.y.abs_diff(y) <= self.beacon_dist()
+    }
+
+    fn range(&self, y: isize) -> (isize, isize) {
+        let x_dist: isize = (self.beacon_dist() - self.y.abs_diff(y)) as isize;
+        let left = self.x - x_dist;
+        let right = self.x + x_dist;
+        (left, right)
     }
 }
 
@@ -51,7 +74,7 @@ impl FromStr for Sensor {
         Ok(Self {
             x,
             y,
-            nearest_beacon: Beacon{x: xb, y: yb},
+            nearest_beacon: Beacon { x: xb, y: yb },
         })
     }
 }
@@ -72,28 +95,45 @@ struct Map {
 }
 
 impl Map {
-    fn part1(&self, y: isize) -> usize {
-        let (left, right) = self.sensors
+    /*
+     * This is only working because this line is not the one of part 2
+     * As at the end, the range is continuous.
+     */
+    fn part1(&self, y: isize) -> (isize, isize) {
+        self.sensors
             .iter()
             .filter(|s| s.in_range(y))
-            .map(|s| {
-                let x_dist: isize = (s.beacon_dist() - s.y.abs_diff(y)) as isize;
-                let left = s.x - x_dist;
-                let right = s.x + x_dist;
-                (left, right)
-            })
+            .map(|s| s.range(y))
             .reduce(|a, b| (isize::min(a.0, b.0), isize::max(a.1, b.1)))
-            .unwrap();
-        right.abs_diff(left) + 1
+            .unwrap()
     }
 
-    fn part1_2(&self, y: isize) -> usize{
+    fn beacon_amount(&self, y: isize) -> usize {
         self.sensors
-        .iter()
-        .map(|s| &s.nearest_beacon)
-        .filter(|b| b.y == y)
-        .collect::<HashSet<_>>()
-        .iter()
-        .count()
+            .iter()
+            .map(|s| &s.nearest_beacon)
+            .filter(|b| b.y == y)
+            .collect::<HashSet<_>>()
+            .iter()
+            .count()
+    }
+
+    fn part_2(&self, y: isize) -> Option<Beacon> {
+        let mut ranges = self
+            .sensors
+            .iter()
+            .filter(|s| s.in_range(y))
+            .map(|s| s.range(y))
+            .collect::<Vec<_>>();
+        // Sort by left boundary
+        ranges.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+        let mut right = ranges.first().unwrap().1;
+        for (l, r) in &ranges[1..] {
+            if l > &right{
+                return Some(Beacon{x: *l-1, y});
+            }
+            right = isize::max(right, *r);
+        }
+        None
     }
 }
