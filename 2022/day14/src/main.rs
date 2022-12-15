@@ -15,8 +15,8 @@ fn main() {
                 .windows(2)
                 .for_each(|w| {
                     //dbg!(w[0], w[1]);
-                    cave.add_wall(&w[0], &w[1])}
-                )
+                    cave.add_wall(&w[0], &w[1])
+                })
         });
     cave.init_depth();
     dbg!(cave.max_depth);
@@ -47,20 +47,20 @@ impl FromStr for Point {
     }
 }
 
-impl Point{
-    fn to(&self, dest: &Point) -> Vec<Point>{
-        if self.x == dest.x{
-            if self.y < dest.y{
-                return (self.y..=dest.y).map(|y| Point{x: self.x, y}).collect();
+impl Point {
+    fn to(&self, dest: &Point) -> Vec<Point> {
+        if self.x == dest.x {
+            if self.y < dest.y {
+                return (self.y..=dest.y).map(|y| Point { x: self.x, y }).collect();
             } else {
-                return (dest.y..self.y).map(|y| Point{x: self.x, y}).collect();
+                return (dest.y..self.y).map(|y| Point { x: self.x, y }).collect();
             }
         }
-        if self.y == dest.y{
-            if self.x < dest.x{
-                return (self.x..=dest.x).map(|x| Point{x, y:self.y}).collect();
+        if self.y == dest.y {
+            if self.x < dest.x {
+                return (self.x..=dest.x).map(|x| Point { x, y: self.y }).collect();
             } else {
-                return (dest.x..=self.x).map(|x| Point{x, y:self.y}).collect();
+                return (dest.x..=self.x).map(|x| Point { x, y: self.y }).collect();
             }
         }
         panic!()
@@ -81,9 +81,9 @@ struct Cave {
 
 impl Cave {
     fn add_wall(&mut self, a: &Point, b: &Point) {
-            a.to(b).iter().for_each(|p| {
-                self.state[p.y][p.x] = Tile::Rock
-            })
+        a.to(b)
+            .iter()
+            .for_each(|p| self.state[p.y][p.x] = Tile::Rock)
     }
 
     fn init_depth(&mut self) {
@@ -99,9 +99,17 @@ impl Cave {
     fn add_sand(&mut self, seed: &Point) -> Option<Point> {
         let mut pos = *seed;
         loop {
+            /*
+            // part 1
             if pos.y > self.max_depth {
                 //dbg!("done".to_owned(), pos.x);
                 return None;
+            }
+             */
+            // part 2
+            if pos.y + 1 == self.max_depth + 1 {
+                //dbg!("done".to_owned(), pos.x);
+                break;
             }
             if self.state[pos.y + 1][pos.x] == Tile::Air {
                 pos = Point {
@@ -118,7 +126,13 @@ impl Cave {
                     x: pos.x + 1,
                     y: pos.y + 1,
                 }
-            } else {
+            }
+            // part 2
+            else if self.state[pos.y][pos.x] != Tile::Air {
+                return None;
+            }
+            // part 1
+            else {
                 break;
             }
             //dbg!("nd".to_owned());
