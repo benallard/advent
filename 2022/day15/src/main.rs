@@ -7,7 +7,7 @@ fn main() {
         .map(|l| l.unwrap().trim().to_owned())
         .for_each(|l| map.sensors.push(l.parse().unwrap()));
 
-    println!("part1: {}", map.part1(10) - map.part1_2(10));
+    println!("part1: {}", map.part1(2000000) - map.part1_2(2000000));
 }
 
 fn man_dist(x1: isize, y1: isize, x2: isize, y2: isize) -> usize {
