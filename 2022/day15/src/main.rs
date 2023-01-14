@@ -19,9 +19,9 @@ fn main() {
     let val = 20; // test
     let val = 4000000;
 
-    for y in 0..val{
-        if let Some(b) = map.part_2(y){
-            println!("part2: {}", b.x*4000000 + b.y);
+    for y in 0..val {
+        if let Some(b) = map.part_2(y) {
+            println!("part2: {}", b.x * 4000000 + b.y);
             break;
         }
     }
@@ -129,8 +129,8 @@ impl Map {
         ranges.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
         let mut right = ranges.first().unwrap().1;
         for (l, r) in &ranges[1..] {
-            if l > &right{
-                return Some(Beacon{x: *l-1, y});
+            if l > &right {
+                return Some(Beacon { x: *l - 1, y });
             }
             right = isize::max(right, *r);
         }
