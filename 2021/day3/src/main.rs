@@ -58,7 +58,7 @@ fn oxygen(numbers: &Vec<u64>) -> u64 {
             .map(|x| (x >> idx) & 1)
             .filter(|x| *x == 1)
             .count();
-        let cond = match count*2 >= remainings.len() {
+        let cond = match count * 2 >= remainings.len() {
             true => 1,
             false => 0,
         };
@@ -78,7 +78,6 @@ fn oxygen(numbers: &Vec<u64>) -> u64 {
     *remainings.get(0).unwrap()
 }
 
-
 fn co2(numbers: &Vec<u64>) -> u64 {
     let mut remainings = numbers.clone();
     let width = numbers
@@ -94,7 +93,7 @@ fn co2(numbers: &Vec<u64>) -> u64 {
             .map(|x| (x >> idx) & 1)
             .filter(|x| *x == 1)
             .count();
-        let cond = match count*2 >= remainings.len() {
+        let cond = match count * 2 >= remainings.len() {
             true => 0,
             false => 1,
         };
