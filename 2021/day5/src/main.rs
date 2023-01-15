@@ -121,10 +121,3 @@ fn test_diag() {
     assert_eq!(7, "9,4 -> 3,4".parse::<Line>().unwrap().points().len());
     assert_eq!(7, "4,9 -> 4,3".parse::<Line>().unwrap().points().len());
 }
-
-#[test]
-fn test_arith() {
-    let a: u32 = 534;
-    let b: u32 = 7784;
-    //let c= a - b;
-}

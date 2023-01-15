@@ -1,7 +1,13 @@
 use std::collections::HashMap;
+use std::io::BufRead;
 
 fn main() {
-    let orbits = parse_orbits(include_str!("../../day6.txt").lines().collect());
+    let mut lines = vec![];
+    for line in std::io::BufReader::new(std::io::stdin()).lines() {
+        let line = line.unwrap();
+        lines.push(line.to_owned());
+    }
+    let orbits = parse_orbits(lines.iter().map(|l| l.as_str()).collect());
     println!("Orbit amounts: {}", count_orbits(&orbits));
     println!("Transfers: {}", min_transfers(&orbits, "YOU", "SAN"));
 }

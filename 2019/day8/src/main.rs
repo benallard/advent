@@ -1,3 +1,5 @@
+use std::{io::Read, ops::Deref};
+
 #[derive(Clone)]
 struct Layer {
     data: Vec<Vec<u8>>,
@@ -131,8 +133,11 @@ impl Image {
 }
 
 fn main() {
-    let content = include_str!("../../day8.txt").trim();
-    let img = Image::new(content, 25, 6);
+    let mut content = String::new();
+    std::io::BufReader::new(std::io::stdin())
+        .read_to_string(&mut content)
+        .unwrap();
+    let img = Image::new(content.deref(), 25, 6);
 
     println!("Part 1: {}", img.part1());
 

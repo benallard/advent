@@ -186,7 +186,9 @@ fn part2(map: &Map) -> u32{
 }
 
 fn main() {
-    let map = parse_map(include_str!("../../day10.txt"));
+    let mut content  = String::new();
+    std::io::BufReader::new(std::io::stdin()).read_to_string(&mut content).unwrap();
+    let map = parse_map(content);
     println!("Max: {}", part1(&map));
     println!("200th: {}", part2(&map));
 }
