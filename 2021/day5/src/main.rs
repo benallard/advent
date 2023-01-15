@@ -30,7 +30,7 @@ fn main() {
             *count.entry(point).or_insert(0) += 1;
         }
     }
-    let part2= count.iter().filter(|(_, v)| **v > 1).count();
+    let part2 = count.iter().filter(|(_, v)| **v > 1).count();
     println!("part2: {}", part2);
 }
 
@@ -85,16 +85,16 @@ impl Line {
 
     fn points(&self) -> Vec<Point> {
         let mut res = vec![];
-        let x_offs:i32;
+        let x_offs: i32;
         if self.a.x == self.b.x {
             x_offs = 0;
-        } else if self.a.x > self.b.x{
-                x_offs = -1;
-            } else {
-                x_offs = 1;
-            }
-        
-        let y_offs:i32;
+        } else if self.a.x > self.b.x {
+            x_offs = -1;
+        } else {
+            x_offs = 1;
+        }
+
+        let y_offs: i32;
         if self.a.y == self.b.y {
             y_offs = 0;
         } else if self.a.y > self.b.y {
@@ -123,7 +123,7 @@ fn test_diag() {
 }
 
 #[test]
-fn test_arith(){
+fn test_arith() {
     let a: u32 = 534;
     let b: u32 = 7784;
     //let c= a - b;
