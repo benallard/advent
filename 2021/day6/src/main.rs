@@ -40,8 +40,8 @@ fn main() {
             pop2.remove(&age);
         }
         if _day < 20 || _day == 79 {
-            if _day < 5{
-              dbg!(&pop2);
+            if _day < 5 {
+                dbg!(&pop2);
             }
             println!(
                 "Day: {}, pop: {}, pop2: {}",
