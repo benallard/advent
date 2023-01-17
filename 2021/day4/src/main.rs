@@ -18,7 +18,8 @@ fn main() {
         .map(|c| c[1..].join("\n").parse::<Board>().unwrap())
         .collect::<Vec<_>>();
 
-    'outer: for number in numbers {
+    //'outer:
+    for number in numbers {
         for board in boards.iter_mut() {
             if board.done() {
                 continue;
