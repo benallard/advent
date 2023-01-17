@@ -14,7 +14,7 @@ fn main() {
         .map(|e| e.count_output_1_4_7_8())
         .sum::<usize>();
     println!("part1: {}", part1);
-    let part2 = entries.into_iter().map(|e| e.decode()).sum::<u32>();
+    let part2 = entries.into_iter().map(|e| e.decode()).inspect(|v| println!("value: {}", v)).sum::<u32>();
     println!("part2: {}", part2);
 }
 
@@ -220,7 +220,7 @@ impl Entry {
         let bottom = five_two_three.minus(&top).minus(&middle);
         // 3 = 1 + top + middle + bottom
         let three = &one.plus(&top).plus(&middle).plus(&bottom);
-        // 9 = L6 - 3 = L1 -> TL
+        // 9 = L6 - 3 = L1
         let nine = self
             .patterns
             .iter()
