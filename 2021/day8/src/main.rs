@@ -14,7 +14,11 @@ fn main() {
         .map(|e| e.count_output_1_4_7_8())
         .sum::<usize>();
     println!("part1: {}", part1);
-    let part2 = entries.into_iter().map(|e| e.decode()).inspect(|v| println!("value: {}", v)).sum::<u32>();
+    let part2 = entries
+        .into_iter()
+        .map(|e| e.decode())
+        .inspect(|v| println!("value: {}", v))
+        .sum::<u32>();
     println!("part2: {}", part2);
 }
 
