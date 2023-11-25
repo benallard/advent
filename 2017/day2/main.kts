@@ -17,9 +17,39 @@ fun minMaxDiff(line: String) : Int{
     return max - min;
 }
 
-var res = 0;
+fun evenDivDiv(line: String) : Int{
+    var found = false;
+    var res: Int = 0;
+
+    val list = line.split('\t')
+        .map{it.toInt()};
+    for ((idx, a) in list.withIndex()){
+        for (b in list.subList(idx+1, list.size)){
+            if (a > b){
+                found = a % b == 0;
+                res = a / b;
+            } else {
+                found = b % a == 0;
+                res = b / a;
+            }
+            if (found){
+                break;
+            }
+        }
+        if (found){
+            break;
+        }
+    }
+    return res;
+}
+
+var res1 = 0;
+var res2 = 0;
 
 for (line in generateSequence{readLine()}){
-    res += minMaxDiff(line);
+    res1 += minMaxDiff(line);
+    res2 += evenDivDiv(line);
+    println("res2: $res2");
 }
-println("Part1: $res")
+println("Part1: $res1")
+println("Part2: $res2")
