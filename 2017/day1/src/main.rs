@@ -1,6 +1,6 @@
 use std::io;
 
-fn main(){
+fn main() {
     let mut input = String::new();
     io::stdin().read_line(&mut input).unwrap();
     println!("Part1: {}", captcha(&input))
@@ -12,7 +12,7 @@ fn captcha(val: &str) -> u32 {
         .map(|c| c.to_digit(10).unwrap())
         .collect::<Vec<u32>>()
         .windows(2)
-        .map(|w| if w[0] == w[1] {w[0]} else {0})
+        .map(|w| if w[0] == w[1] { w[0] } else { 0 })
         .sum::<u32>()
 }
 

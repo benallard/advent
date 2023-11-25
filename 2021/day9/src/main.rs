@@ -12,7 +12,7 @@ fn main() {
         .map(|c| (map.points[c.y][c.x] + 1) as u32)
         .sum::<u32>();
     println!("part1: {}", part1);
-/* 
+    /*
     let part2_vec = map
         .low_points()
         .iter()
@@ -96,8 +96,8 @@ impl Map {
         return true;
     }
 
-/*    fn basin_size(&self, x: usize, y: usize) -> usize {
-        
-    }
-*/
+    /*    fn basin_size(&self, x: usize, y: usize) -> usize {
+
+        }
+    */
 }
