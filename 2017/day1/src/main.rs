@@ -3,10 +3,11 @@ use std::io;
 fn main() {
     let mut input = String::new();
     io::stdin().read_line(&mut input).unwrap();
-    println!("Part1: {}", captcha(&input))
+    println!("Part1: {}", captcha1(&input));
+    println!("Part2: {}", captcha2(&input));
 }
 
-fn captcha(val: &str) -> u32 {
+fn captcha1(val: &str) -> u32 {
     //val.push(val.chars().nth(0));
     val.chars()
         .map(|c| c.to_digit(10).unwrap())
@@ -16,10 +17,30 @@ fn captcha(val: &str) -> u32 {
         .sum::<u32>()
 }
 
+fn captcha2(val: &str) -> u32 {
+    let mut list1 = val.chars()
+        .map(|c| c.to_digit(10).unwrap())
+        .collect::<Vec<_>>();
+    let list2 = list1.split_off(list1.len() / 2);
+    let res: u32 = list1.iter().zip(list2.iter())
+    .map(|(a, b)| if a == b {*a} else {0})
+    .sum();
+    res * 2
+}
+
 #[test]
 fn examples() {
-    assert_eq!(captcha("1122"), 3);
-    assert_eq!(captcha("1111"), 4);
-    assert_eq!(captcha("1234"), 0);
-    assert_eq!(captcha("91212129"), 9)
+    assert_eq!(captcha1("1122"), 3);
+    assert_eq!(captcha1("1111"), 4);
+    assert_eq!(captcha1("1234"), 0);
+    assert_eq!(captcha1("91212129"), 9)
+}
+
+#[test]
+fn examples2() {
+    assert_eq!(captcha2("1212"), 6);
+    assert_eq!(captcha2("1221"), 0);
+    assert_eq!(captcha2("123425"), 4);
+    assert_eq!(captcha2("123123"), 12);
+    assert_eq!(captcha2("12131415"), 4);
 }
