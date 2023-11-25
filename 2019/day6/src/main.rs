@@ -25,7 +25,7 @@ fn dist<'a>(map: &'a HashMap<&'a str, &'a str>, object: &'a str) -> Vec<&'a str>
     let mut res = Vec::new();
     let mut obj = object;
     while map.contains_key(obj) {
-        res.push(obj.clone());
+        res.push(obj);
         obj = map[obj];
     }
     return res;

@@ -7,7 +7,7 @@ fn main() {
         .map(|l| l.unwrap().trim().to_owned())
         .for_each(|l| map.sensors.push(l.parse().unwrap()));
 
-    let val = 10; // test
+    let _val = 10; // test
     let val = 2000000;
 
     let (left, right) = map.part1(val);
@@ -16,7 +16,7 @@ fn main() {
         right.abs_diff(left) + 1 - map.beacon_amount(val)
     );
 
-    let val = 20; // test
+    let _val = 20; // test
     let val = 4000000;
 
     for y in 0..val {

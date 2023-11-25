@@ -12,6 +12,23 @@ fn main() {
         .map(|c| (map.points[c.y][c.x] + 1) as u32)
         .sum::<u32>();
     println!("part1: {}", part1);
+/* 
+    let part2_vec = map
+        .low_points()
+        .iter()
+        .map(|c| map.basin_size(c.x, c.y))
+        .collect::<Vec<_>>();
+    part2_vec.sort();
+    let part2 = part2_vec
+        .iter()
+        .rev()
+        .collect::<Vec<_>>()
+        .chunks(3)
+        .nth(0)
+        .map(|c| c[0] * c[1] * c[2])
+        .unwrap();
+    println!("part2 {}", part2);
+    */
 }
 
 struct Map {
@@ -78,4 +95,9 @@ impl Map {
         }
         return true;
     }
+
+/*    fn basin_size(&self, x: usize, y: usize) -> usize {
+        
+    }
+*/
 }
