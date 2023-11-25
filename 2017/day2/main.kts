@@ -1,3 +1,4 @@
+#!/usr/bin/env -S kotlinc -script
 
 fun minMaxDiff(line: String) : Int{
     var min = 10_000;
@@ -49,7 +50,6 @@ var res2 = 0;
 for (line in generateSequence{readLine()}){
     res1 += minMaxDiff(line);
     res2 += evenDivDiv(line);
-    println("res2: $res2");
 }
 println("Part1: $res1")
 println("Part2: $res2")
