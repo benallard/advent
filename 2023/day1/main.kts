@@ -1,6 +1,6 @@
 #!/usr/bin/env -S kotlinc -script
 
-fun extractValues(aLine: String) : Int{
+fun extractValues(aLine: CharSequence): Int {
     val first = aLine.first { c -> c.isDigit() }
     val last = aLine.last { it.isDigit() }
     return first.digitToInt() * 10 + last.digitToInt()
@@ -12,18 +12,19 @@ assert(extractValues("a1b2c3d4e5f") == 15)
 assert(extractValues("treb7uchet") == 77)
 
 fun extractValues2(aLine: String): Int {
-    return extractValues(
-        aLine
-            .replace("one", "1")
-            .replace("two", "2")
-            .replace("three", "3")
-            .replace("four", "4")
-            .replace("five", "5")
-            .replace("six", "6")
-            .replace("seven", "7")
-            .replace("eight", "8")
-            .replace("nine", "9")
-    )
+    return extractValues(aLine.windowedSequence(5, partialWindows = true).map { w ->
+        w
+            .replace("^one".toRegex(), "1")
+            .replace("^two".toRegex(), "2")
+            .replace("^three".toRegex(), "3")
+            .replace("^four".toRegex(), "4")
+            .replace("^five".toRegex(), "5")
+            .replace("^six".toRegex(), "6")
+            .replace("^seven".toRegex(), "7")
+            .replace("^eight".toRegex(), "8")
+            .replace("^nine".toRegex(), "9")
+            .get(0)
+    }.joinToString(""))
 }
 
 assert(extractValues2("two1nine") == 29)
