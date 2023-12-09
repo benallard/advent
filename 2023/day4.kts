@@ -17,6 +17,10 @@ class Card(val nr: Int, val winnings: Set<Int>, val have: Set<Int>) {
         return res
     }
 
+    fun matchingNr(): Int {
+        return have.count { winnings.contains(it) }
+    }
+
 }
 
 fun readCard(aLine: String): Card {
@@ -37,10 +41,19 @@ assert(readCard("Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36").points() == 
 assert(readCard("Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11").points() == 0)
 
 var part1 = 0
+val cards = ArrayList<Card>()
 for (line in generateSequence { readlnOrNull() }) {
-    val card = readCard(line);
+    val card = readCard(line)
     part1 += card.points()
+    cards.add(card)
 }
 
 println("Part1: $part1")
-
+val extras = IntArray(cards.size){ 1 }
+for ((idx, card) in cards.withIndex()){
+    for (win in 1..card.matchingNr()){
+        extras[idx + win] += extras[idx]
+    }
+}
+//println(extras.map { it.toString() })
+println("Part2: ${extras.sum()}")
