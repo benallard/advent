@@ -5,7 +5,7 @@ enum class Card(val display: Char) {
     AS('A'),
     KING('K'),
     QUEEN('Q'),
-    J('J'),
+    // put joker here for part 1 !!!
     T('T'),
     NINE('9'),
     EIGHT('8'),
@@ -15,6 +15,7 @@ enum class Card(val display: Char) {
     FOUR('4'),
     THREE('3'),
     TWO('2'),
+    JOKER('J'),
     ;
 }
 
@@ -40,7 +41,7 @@ class Hand(val cards: Array<Card>, val bid: Int) : Comparable<Hand> {
         ;
     }
 
-    fun getType(): HandType {
+    fun getType1(): HandType {
         if (cards.distinct().count() == 1) {
             return HandType.FIVE
         }
@@ -64,6 +65,31 @@ class Hand(val cards: Array<Card>, val bid: Int) : Comparable<Hand> {
         }
         return HandType.HIGH
     }
+    fun getType2(): HandType {
+        val jokers = cards.count { it == Card.JOKER }
+        if (jokers == 0){
+            return getType1()
+        }
+        val realCards = cards.filter { it != Card.JOKER }.toTypedArray()
+        if (realCards.distinct().count() == 1) {
+            return HandType.FIVE
+        }
+        val occurrences = realCards.groupBy(Card::name)
+                .values
+                .map { it.count() }
+        println("$this: $jokers, $occurrences")
+        if (occurrences.contains(4 - jokers)) {
+            return HandType.FOUR
+        }
+        if (occurrences.count { it == 2 } == 2) {
+            return HandType.HOUSE
+        }
+        if (occurrences.contains(3 - jokers)) {
+            return HandType.THREE
+        }
+        assert(jokers == 1)
+        return HandType.PAIR
+    }
 
     fun card1(): Card = cards[0]
     fun card2(): Card = cards[1]
@@ -72,7 +98,7 @@ class Hand(val cards: Array<Card>, val bid: Int) : Comparable<Hand> {
     fun card5(): Card = cards[4]
 
     override fun compareTo(other: Hand): Int = compareBy(
-            Hand::getType,
+            Hand::getType2,  // use getType1 for part 1 !!!
             Hand::card1,
             Hand::card2,
             Hand::card3,
@@ -94,10 +120,10 @@ fun readHand(line: String): Hand {
 
 val hands = generateSequence { readlnOrNull() }
         .map { readHand(it) }
-val part1 = hands
+val result = hands
         .sortedDescending()
         .withIndex()
         .onEach { println(it) }
         .map { hand -> (hand.index + 1) * hand.value.bid }
         .sum()
-println("Part1: $part1")
+println("Result: $result")
