@@ -71,7 +71,7 @@ class Hand(val cards: Array<Card>, val bid: Int) : Comparable<Hand> {
             return getType1()
         }
         val realCards = cards.filter { it != Card.JOKER }.toTypedArray()
-        if (realCards.distinct().count() == 1) {
+        if (jokers == 5 || realCards.distinct().count() == 1) {
             return HandType.FIVE
         }
         val occurrences = realCards.groupBy(Card::name)
