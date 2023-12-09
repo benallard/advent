@@ -1,20 +1,20 @@
 #!/usr/bin/env -S kotlinc -J-ea -script
 println("ready")
 
-class Schematics(val spots: List<List<Char>>){
+class Schematics(val spots: List<List<Char>>) {
 
-    fun part1(): Int{
+    fun part1(): Int {
         var res = 0
-        for (y in spots.indices){
+        for (y in spots.indices) {
             var prevDigit = false
             var start = -1
-            for (x in spots[y].indices){
+            for (x in spots[y].indices) {
                 val isDigit = spots[y][x].isDigit();
-                if (prevDigit != isDigit){
-                    if (isDigit){
+                if (prevDigit != isDigit) {
+                    if (isDigit) {
                         start = x
                     } else {
-                        if (!isolated(y, start, x-1)){
+                        if (!isolated(y, start, x - 1)) {
                             val partNr = spots[y].subList(start, x).joinToString(separator = "").toInt()
                             res += partNr
                             //println("$x, $y: $partNr")
@@ -23,8 +23,8 @@ class Schematics(val spots: List<List<Char>>){
                 }
                 prevDigit = isDigit
             }
-            if (prevDigit){
-                if (!isolated(y, start, spots[y].size)){
+            if (prevDigit) {
+                if (!isolated(y, start, spots[y].size)) {
                     res += spots[y].subList(start, spots[y].size).joinToString(separator = "").toInt()
                 }
             }
@@ -32,19 +32,19 @@ class Schematics(val spots: List<List<Char>>){
         return res
     }
 
-    private fun isolated(line: Int, start: Int, end: Int): Boolean{
-        for (y in line - 1..line + 1){
+    private fun isolated(line: Int, start: Int, end: Int): Boolean {
+        for (y in line - 1..line + 1) {
             if (y < 0 || y >= spots.size) {
                 continue
             }
-            for (x in start-1..end+1){
-                if ( x < 0 || x >= spots[y].size){
+            for (x in start - 1..end + 1) {
+                if (x < 0 || x >= spots[y].size) {
                     continue
                 }
-                if ( y == line && x >= start && x <= end){
+                if (y == line && x >= start && x <= end) {
                     continue
                 }
-                if (spots[y][x] != '.'){
+                if (spots[y][x] != '.') {
                     //println("$x, $y, ${spots[y][x]}")
                     return false
                 }
@@ -54,13 +54,13 @@ class Schematics(val spots: List<List<Char>>){
         return true
     }
 
-    fun part2(): Int{
+    fun part2(): Int {
         var res = 0
         for (y in spots.indices) {
-            for (x in spots[y].indices){
-                if (spots[y][x] == '*'){
+            for (x in spots[y].indices) {
+                if (spots[y][x] == '*') {
                     val gearRatio = ratio(x, y)
-                    if (gearRatio != 0){
+                    if (gearRatio != 0) {
                         res += gearRatio;
                     }
                 }
@@ -72,28 +72,28 @@ class Schematics(val spots: List<List<Char>>){
     private fun ratio(aX: Int, aY: Int): Int {
         var res = 1
         var count = 0
-        for (y in aY - 1 .. aY + 1){
-            if (y < 0 || y >= spots.size){
+        for (y in aY - 1..aY + 1) {
+            if (y < 0 || y >= spots.size) {
                 continue
             }
             var prevDigit = false
-            for (x in aX - 1 .. aX + 1){
-                if ( x < 0 || x >= spots[y].size){
+            for (x in aX - 1..aX + 1) {
+                if (x < 0 || x >= spots[y].size) {
                     continue
                 }
-                if (y == aY && x == aX){
+                if (y == aY && x == aX) {
                     prevDigit = false
                     continue
                 }
                 val isDigit = spots[y][x].isDigit()
-                if (isDigit != prevDigit && isDigit){
+                if (isDigit != prevDigit && isDigit) {
                     res *= readDigit(x, y)
                     count += 1
                 }
                 prevDigit = isDigit
             }
         }
-        if (count == 2){
+        if (count == 2) {
             return res
         }
         return 0
@@ -108,8 +108,8 @@ class Schematics(val spots: List<List<Char>>){
             }
         }
         var stop = spots[line].size - 1
-        for (x in end..<spots[line].size){
-            if (!spots[line][x].isDigit()){
+        for (x in end..<spots[line].size) {
+            if (!spots[line][x].isDigit()) {
                 stop = x - 1
                 break
             }
@@ -119,9 +119,9 @@ class Schematics(val spots: List<List<Char>>){
 
 }
 
-fun readSchematics() : Schematics{
+fun readSchematics(): Schematics {
     val spots = ArrayList<List<Char>>()
-    for (line in generateSequence{ readlnOrNull() }){
+    for (line in generateSequence { readlnOrNull() }) {
         spots.add(line.toList())
     }
     return Schematics(spots)

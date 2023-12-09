@@ -25,7 +25,7 @@ class CategoryMap(val source: String, val destination: String){
 
     class Range(val source: Long, val destination: Long, val length: Int){
         fun matches(value: Long): Boolean{
-            return value > source && value <= source + length
+            return value >= source && value < source + length
         }
         fun get(value: Long): Long{
             return destination + (value - source)
@@ -56,22 +56,58 @@ for (map in generateSequence { readMap() }){
     }
 }
 
-println("Seeds: $seeds")
 
-var lowestLoc = Long.MAX_VALUE
-for (seed in seeds){
+fun processSeed(seed: Long): Long {
     var value = seed
     var cat = "seed"
-    while (cat != "location"){
+    //println("$cat $value")
+    while (cat != "location") {
         val map = maps[cat]!!
         value = map.get(value)
         cat = map.destination
+        //println("$cat $value")
     }
-    if (value < lowestLoc){
-        lowestLoc = value
-    }
-    println("Processed seed $seed: location=$value")
+    return value
 }
-println("Part1: $lowestLoc")
+
+fun <X, R> makeFunctionCache(fn: (X) -> R): (X) -> R {
+    val cache: MutableMap<X, R> = HashMap()
+    return {
+        cache.getOrPut(it, { fn(it) })
+    }
+}
+
+val cachedProcess = makeFunctionCache<Long, Long>{ processSeed(it) }
+
+run {
+    println("Seeds: $seeds")
+    var lowestLoc = Long.MAX_VALUE
+    for (seed in seeds) {
+        val value = cachedProcess(seed)
+        if (value < lowestLoc) {
+            lowestLoc = value
+        }
+        println("Processed seed $seed: location=$value")
+    }
+
+    println("Part1: $lowestLoc")
+}
+
+run {
+    assert(seeds.size % 2 == 0)
+
+    var lowestLoc = Long.MAX_VALUE
+    for ((start, len) in seeds.chunked(2)) {
+        for (seed in start..<start + len) {
+            val value = cachedProcess(seed)
+            if (value < lowestLoc) {
+                lowestLoc = value
+            }
+            //println("Processed seed $seed: location=$value")
+        }
+    }
+
+    println("Part2: $lowestLoc")
+}
 
 
