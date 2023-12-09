@@ -5,9 +5,11 @@ class Game(val id: Int, val sets: Set<Map<String, Int>>){
 
     fun possible(): Boolean {
         // only 12 red cubes, 13 green cubes, and 14 blue cubes
-        return sets.all{ it.get("red") ?: 0 <= 12
-         && it.get("green")?: 0 <= 13
-         && it.get("blue")?: 0 <= 14}
+        return sets.all{
+            ((it["red"] ?: 0) <= 12
+                    && (it["green"] ?: 0) <= 13
+                    && (it["blue"] ?: 0) <= 14)
+        }
     }
 
     fun power(): Int {
@@ -15,14 +17,14 @@ class Game(val id: Int, val sets: Set<Map<String, Int>>){
         var green = 0;
         var blue = 0;
         for (set_ in sets){
-            if (red < set_.get("red") ?: 0){
-                red = set_.get("red")?: 0
+            if (red < (set_["red"] ?: 0)){
+                red = set_["red"] ?: 0
             }
-            if (green < set_.get("green") ?: 0){
-                green = set_.get("green")?: 0
+            if (green < (set_["green"] ?: 0)){
+                green = set_["green"] ?: 0
             }
-            if (blue < set_.get("blue") ?: 0){
-                blue = set_.get("blue")?: 0 
+            if (blue < (set_["blue"] ?: 0)){
+                blue = set_["blue"] ?: 0
             }
         }
         return red * green * blue;
@@ -40,7 +42,7 @@ fun readGame(aLine: String): Game{
             val defs = def.split(" ")
             val color = defs[1]
             val amount = defs[0].toInt()
-            s.put(color, amount);
+            s[color] = amount;
         }
         sets.add(s)
     }
@@ -64,7 +66,7 @@ assert(readGame("Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green").power(
 var part1 = 0
 var part2 = 0
 
-for (line in generateSequence{readLine()}){
+for (line in generateSequence{ readlnOrNull() }){
     val game = readGame(line)
     if (game.possible()){
         part1 += game.id;
