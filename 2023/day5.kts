@@ -3,21 +3,33 @@ println("ready")
 
 val seeds = readln().substring("seeds: ".length)
         .split(" ")
-        .map { it.toInt() }
+        .map { it.toLong() }
         .toSet()
 readln()
 
 class CategoryMap(val source: String, val destination: String){
-    private var mapping: MutableMap<Int, Int> = HashMap()
+    private var mappings = HashSet<Range>()
 
-    fun fillMap(dest: Int, src: Int, len: Int){
-        for (value in 0..<len){
-            mapping[src + value] = dest+value
-        }
+    fun fillMap(dest: Long, src: Long, len: Int){
+        mappings.add(Range(src, dest, len))
     }
 
-    fun get(value: Int): Int{
-        return mapping.getOrDefault(value, value)
+    fun get(value: Long): Long{
+        for (mapping in mappings){
+            if (mapping.matches(value)){
+                return mapping.get(value)
+            }
+        }
+        return value
+    }
+
+    class Range(val source: Long, val destination: Long, val length: Int){
+        fun matches(value: Long): Boolean{
+            return value > source && value <= source + length
+        }
+        fun get(value: Long): Long{
+            return destination + (value - source)
+        }
     }
 
 }
@@ -30,7 +42,7 @@ fun readMap(): CategoryMap{
             break
         }
         val nrs = line.split(" ")
-        catMap.fillMap(nrs[0].toInt(), nrs[1].toInt(), nrs[2].toInt())
+        catMap.fillMap(nrs[0].toLong(), nrs[1].toLong(), nrs[2].toInt())
     }
     return catMap
 }
@@ -40,13 +52,13 @@ val maps = HashMap<String, CategoryMap>()
 for (map in generateSequence { readMap() }){
     maps[map.source] = map
     if (map.destination == "location"){
-        break;
+        break
     }
 }
 
 println("Seeds: $seeds")
 
-var lowestLoc = Int.MAX_VALUE
+var lowestLoc = Long.MAX_VALUE
 for (seed in seeds){
     var value = seed
     var cat = "seed"
@@ -58,6 +70,7 @@ for (seed in seeds){
     if (value < lowestLoc){
         lowestLoc = value
     }
+    println("Processed seed $seed: location=$value")
 }
 println("Part1: $lowestLoc")
 
