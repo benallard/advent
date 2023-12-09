@@ -99,7 +99,7 @@ run {
     var lowestLoc = Long.MAX_VALUE
     for ((start, len) in seeds.chunked(2)) {
         for (seed in start..<start + len) {
-            val value = cachedProcess(seed)
+            val value = processSeed(seed)
             if (value < lowestLoc) {
                 lowestLoc = value
             }
