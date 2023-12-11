@@ -1,4 +1,4 @@
-#!/usr/bin/env -S kotlinc -script
+#!/usr/bin/env -S kotlinc -J-ea -script
 
 fun extractValues(aLine: CharSequence): Int {
     val first = aLine.first { c -> c.isDigit() }
