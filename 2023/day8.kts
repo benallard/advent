@@ -62,6 +62,10 @@ while (lengths.any { it == 0 }) {
     steps++
     for ((idx, cur) in currents.withIndex()) {
         if (cur[2] == 'Z' && lengths[idx] == 0) {
+            // THis condition is mandatory for the LCM approach to work fine.
+            if (steps % instructions.length != 0L){
+                throw AssertionError()
+            }
             lengths[idx] = steps.toInt()
         }
     }
