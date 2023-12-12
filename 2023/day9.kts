@@ -1,5 +1,3 @@
-#!/usr/bin/env -S kotlinc -J-ea -script
-println("ready")
 
 fun predict1(values: List<Int>): Int {
     if (values.all { it == 0 }) {
@@ -21,8 +19,8 @@ val res1 = predict2(listOf(10, 13, 16, 21, 30, 45))
 assert(res1 == 5)
 
 
-val input = generateSequence { readlnOrNull() }.map {
-    it.split(" +".toRegex())
+val input = generateSequence { readlnOrNull() }.map { s ->
+    s.split(" +".toRegex())
             .map { it.toInt() }
             .toList()
 }.toList()

@@ -5,7 +5,8 @@ import kotlin.math.pow
 
 println("ready")
 
-class Race(val duration: Long, val maxDist: Long) {
+class Race(private val duration: Long,
+           private val maxDist: Long) {
 
     fun part1(): Long {
         val min = (0..duration).first { (duration - it) * it > maxDist }

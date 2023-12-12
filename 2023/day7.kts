@@ -5,6 +5,7 @@ enum class Card(val display: Char) {
     AS('A'),
     KING('K'),
     QUEEN('Q'),
+
     // put joker here for part 1 !!!
     T('T'),
     NINE('9'),
@@ -28,7 +29,8 @@ fun readCard(v: Char): Card {
     throw IllegalArgumentException(v.toString())
 }
 
-class Hand(val cards: Array<Card>, val bid: Int) : Comparable<Hand> {
+class Hand(private val cards: Array<Card>,
+           val bid: Int) : Comparable<Hand> {
 
     enum class HandType {
         FIVE,
@@ -41,7 +43,7 @@ class Hand(val cards: Array<Card>, val bid: Int) : Comparable<Hand> {
         ;
     }
 
-    fun getType1(): HandType {
+    private fun getType1(): HandType {
         if (cards.distinct().count() == 1) {
             return HandType.FIVE
         }
@@ -65,9 +67,10 @@ class Hand(val cards: Array<Card>, val bid: Int) : Comparable<Hand> {
         }
         return HandType.HIGH
     }
-    fun getType2(): HandType {
+
+    private fun getType2(): HandType {
         val jokers = cards.count { it == Card.JOKER }
-        if (jokers == 0){
+        if (jokers == 0) {
             return getType1()
         }
         val realCards = cards.filter { it != Card.JOKER }.toTypedArray()
@@ -91,11 +94,11 @@ class Hand(val cards: Array<Card>, val bid: Int) : Comparable<Hand> {
         return HandType.PAIR
     }
 
-    fun card1(): Card = cards[0]
-    fun card2(): Card = cards[1]
-    fun card3(): Card = cards[2]
-    fun card4(): Card = cards[3]
-    fun card5(): Card = cards[4]
+    private fun card1(): Card = cards[0]
+    private fun card2(): Card = cards[1]
+    private fun card3(): Card = cards[2]
+    private fun card4(): Card = cards[3]
+    private fun card5(): Card = cards[4]
 
     override fun compareTo(other: Hand): Int = compareBy(
             Hand::getType2,  // use getType1 for part 1 !!!

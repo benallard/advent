@@ -23,7 +23,9 @@ class CategoryMap(val source: String, val destination: String){
         return value
     }
 
-    class Range(val source: Long, val destination: Long, val length: Int){
+    class Range(private val source: Long,
+                private val destination: Long,
+                private val length: Int){
         fun matches(value: Long): Boolean{
             return value >= source && value < source + length
         }

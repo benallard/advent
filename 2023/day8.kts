@@ -1,10 +1,12 @@
 #!/usr/bin/env -S kotlinc -J-ea -script
 println("ready")
 
-class Element(val name: String, val left: String, val right: String){
+class Element(val name: String,
+              private val left: String,
+              private val right: String) {
 
-    fun get(side: Char) : String{
-        return if (side == 'L'){
+    fun get(side: Char): String {
+        return if (side == 'L') {
             left
         } else {
             right
@@ -13,7 +15,7 @@ class Element(val name: String, val left: String, val right: String){
 
 }
 
-fun readElement(aLine: String): Element{
+fun readElement(aLine: String): Element {
     val parsed = "(.{3}) = \\((.{3}), (.{3})\\)".toRegex().matchEntire(aLine)!!.groups
     return Element(parsed[1]!!.value, parsed[2]!!.value, parsed[3]!!.value)
 }
@@ -23,7 +25,7 @@ readln()
 
 val network = HashMap<String, Element>()
 
-for (line in generateSequence { readlnOrNull() }){
+for (line in generateSequence { readlnOrNull() }) {
     val elem = readElement(line)
     network[elem.name] = elem
 }
@@ -46,27 +48,27 @@ if (false) {
 }
 
 var currents = network.keys
-        .filter{ it[2] == 'A'}
+        .filter { it[2] == 'A' }
         .toMutableList()
-var lengths = IntArray(currents.size){ 0 }
+var lengths = IntArray(currents.size) { 0 }
 instrIdx = 0
 steps = 0L
-while(lengths.any { it == 0 }){
+while (lengths.any { it == 0 }) {
     val instruction = instructions[instrIdx]
     instrIdx = (instrIdx + 1) % instructions.length
-    for ((idx, cur) in currents.withIndex()){
+    for ((idx, cur) in currents.withIndex()) {
         currents[idx] = network[cur]!!.get(instruction)
     }
     steps++
-    for ((idx, cur) in currents.withIndex()){
-        if (cur[2] == 'Z' && lengths[idx] == 0){
+    for ((idx, cur) in currents.withIndex()) {
+        if (cur[2] == 'Z' && lengths[idx] == 0) {
             lengths[idx] = steps.toInt()
         }
     }
     //println("Currently at $currents")
 }
 
-fun gcd(a: Long, b: Long): Long{
+fun gcd(a: Long, b: Long): Long {
     if (b == 0L) {
 
         return a
@@ -74,12 +76,12 @@ fun gcd(a: Long, b: Long): Long{
     return gcd(b, a % b)
 }
 
-fun findlcm(arr: IntArray,): Long {
+fun findlcm(arr: IntArray): Long {
     var res: Long = arr[0].toLong()
 
-    // ans contains LCM of arr[0], ..arr[i]
+    // res contains LCM of arr[0], ..arr[i]
     // after i'th iteration,
-    for (x in arr){
+    for (x in arr) {
         res = (x * res) /
                 gcd(x.toLong(), res)
     }
