@@ -38,7 +38,7 @@ fun count(line: String, groups: List<Int>, current: Int = 0): Long {
 }
 
 val cache = mutableMapOf<Triple<String, List<Int>, Int>, Long>()
-fun memCount(line: String, groups: List<Int>, current: Int = 0):Long = cache.getOrPut(Triple(line, groups, current)){
+fun memCount(line: String, groups: List<Int>, current: Int = 0): Long = cache.getOrPut(Triple(line, groups, current)) {
     count(line, groups, current)
 }
 

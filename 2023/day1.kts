@@ -1,4 +1,5 @@
 #!/usr/bin/env -S kotlinc -J-ea -script
+println("ready")
 
 fun extractValues(aLine: CharSequence): Int {
     val first = aLine.first { c -> c.isDigit() }
@@ -14,16 +15,16 @@ assert(extractValues("treb7uchet") == 77)
 fun extractValues2(aLine: String): Int {
     return extractValues(aLine.windowedSequence(5, partialWindows = true).map { w ->
         w
-            .replace("^one".toRegex(), "1")
-            .replace("^two".toRegex(), "2")
-            .replace("^three".toRegex(), "3")
-            .replace("^four".toRegex(), "4")
-            .replace("^five".toRegex(), "5")
-            .replace("^six".toRegex(), "6")
-            .replace("^seven".toRegex(), "7")
-            .replace("^eight".toRegex(), "8")
-            .replace("^nine".toRegex(), "9")
-            .get(0)
+                .replace("^one".toRegex(), "1")
+                .replace("^two".toRegex(), "2")
+                .replace("^three".toRegex(), "3")
+                .replace("^four".toRegex(), "4")
+                .replace("^five".toRegex(), "5")
+                .replace("^six".toRegex(), "6")
+                .replace("^seven".toRegex(), "7")
+                .replace("^eight".toRegex(), "8")
+                .replace("^nine".toRegex(), "9")
+                .get(0)
     }.joinToString(""))
 }
 
@@ -39,9 +40,9 @@ assert(extractValues2("7pqrstsixteen") == 76)
 var part1 = 0
 var part2 = 0
 
-for (line in generateSequence{readLine()}){
-    part1 += extractValues(line);
-    part2 += extractValues2(line);
+for (line in generateSequence { readlnOrNull() }) {
+    part1 += extractValues(line)
+    part2 += extractValues2(line)
 }
 
 println("Part1: $part1")

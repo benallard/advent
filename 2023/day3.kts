@@ -9,7 +9,7 @@ class Schematics(val spots: List<List<Char>>) {
             var prevDigit = false
             var start = -1
             for (x in spots[y].indices) {
-                val isDigit = spots[y][x].isDigit();
+                val isDigit = spots[y][x].isDigit()
                 if (prevDigit != isDigit) {
                     if (isDigit) {
                         start = x
@@ -61,7 +61,7 @@ class Schematics(val spots: List<List<Char>>) {
                 if (spots[y][x] == '*') {
                     val gearRatio = ratio(x, y)
                     if (gearRatio != 0) {
-                        res += gearRatio;
+                        res += gearRatio
                     }
                 }
             }
