@@ -42,20 +42,20 @@ class Image(private val content: List<List<Pixel>>) {
             .filterNot { it == Pixel.EMPTY }
             .isEmpty()
 
-    fun distance(a: Coordinate, b: Coordinate): Int {
+    fun distance(a: Coordinate, b: Coordinate, factor: Int = 2): Long {
         val lat = (a xTo b).map {
             if (emptyCol(it)) {
-                2
+                factor
             } else {
                 1
-            }
+            }.toLong()
         }.sum()
         val lon = (a yTo b).map {
             if (emptyRow(it)) {
-                2
+                factor
             } else {
                 1
-            }
+            }.toLong()
         }.sum()
         println("$a -> $b : $lat + $lon = ${lat + lon}")
         return lat + lon
@@ -87,3 +87,5 @@ val gPairs = pairs(image.galaxies)
 println("${gPairs.size} pairs")
 val part1 = gPairs.map { image.distance(it.first, it.second) }.sum()
 println("Part1: $part1")
+val part2 = gPairs.map { image.distance(it.first, it.second, 1000000) }.sum()
+println("Part2: $part2")
