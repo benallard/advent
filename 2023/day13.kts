@@ -33,7 +33,7 @@ class MirrorMap(private val spots: List<List<Spot>>) {
 
     private fun part1hor(skip: Int = 0): Int {
         for (idx in 1..<spots.size) {
-            if (idx == skip){
+            if (idx == skip) {
                 continue
             }
             var res = true
@@ -52,7 +52,7 @@ class MirrorMap(private val spots: List<List<Spot>>) {
 
     private fun part1ver(skip: Int = 0): Int {
         for (idx in 1..<spots[0].size) {
-            if (idx == skip){
+            if (idx == skip) {
                 continue
             }
             var res = true
@@ -75,11 +75,11 @@ class MirrorMap(private val spots: List<List<Spot>>) {
         return cola == colb
     }
 
-    fun part2(): Int{
+    fun part2(): Int {
         val part1 = part1()
-        for (map in mutate1()){
+        for (map in mutate1()) {
             val res = map.part1(part1)
-            if (res != part1 && res != 0){
+            if (res != part1 && res != 0) {
                 return res
             }
         }
