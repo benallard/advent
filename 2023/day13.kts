@@ -26,7 +26,9 @@ class MirrorMap(private val spots: List<List<Spot>>) {
             println("Hor: $part1hor")
             return 100 * part1hor
         }
-        return part1ver()
+        val ver = part1ver()
+        println("Ver: $ver")
+        return ver
     }
 
     private fun part1hor(): Int {
@@ -66,6 +68,38 @@ class MirrorMap(private val spots: List<List<Spot>>) {
         return cola == colb
     }
 
+    fun part2(): Int{
+        val part1 = part1()
+        for (map in mutate1()){
+            val res = map.part1()
+            if (res != part1 && res != 0){
+                return res
+            }
+        }
+        return 0
+    }
+
+    private fun mutate1(): Iterator<MirrorMap> = object : Iterator<MirrorMap> {
+        var x = 0
+        var y = 0
+        override fun hasNext(): Boolean = x < spots[0].size && y < spots.size
+        override fun next(): MirrorMap {
+            println("Now at: $x, $y")
+            val newSpots = spots.map { it.toMutableList() }.toMutableList()
+            val old = newSpots[y][x]
+            newSpots[y][x] = when (old) {
+                Spot.ASH -> Spot.ROCK
+                Spot.ROCK -> Spot.ASH
+            }
+            println("$old -> ${newSpots[y][x]}")
+            if (++x == spots[0].size) {
+                x = 0
+                y += 1
+            }
+            return MirrorMap(newSpots)
+        }
+    }
+
 }
 
 fun readMap(): MirrorMap? {
@@ -84,7 +118,13 @@ fun readMap(): MirrorMap? {
     return MirrorMap(spots)
 }
 
-val part1 = generateSequence { readMap() }
+val maps = generateSequence { readMap() }
+        .toList()
+val part1 = maps
         .map { it.part1() }
         .sum()
 println("Part1: $part1")
+val part2 = maps
+        .map { it.part2() }
+        .sum()
+println("Part2: $part2")
