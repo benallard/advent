@@ -40,45 +40,44 @@ class Platform(height: Int, width: Int) {
     }
 
 
-
-    fun idx1(height: Int, width: Int): IntProgression {
-        val r = when (vert) {
-            true -> 0..height
-            false -> 0..width
+    fun idx1(dir: Direction): IntProgression {
+        val r = when (dir.vert) {
+            true -> content.indices
+            false -> content[0].indices
         }
-        return if (!posDir) {
+        return if (!dir.posDir) {
             r.reversed()
         } else {
             r
         }
     }
 
-    fun idx2(height: Int, width: Int): IntProgression {
-        return  when (vert) {
-            true -> 0..width
-            false -> 0..height
+    fun idx2(dir: Direction): IntProgression {
+        return when (dir.vert) {
+            true -> content[0].indices
+            false -> content.indices
         }
     }
 
-    fun before(x: Int, y: Int): List<Int> =
-            idx1(y, x)
+    fun before(dir: Direction, x: Int, y: Int): List<Int> =
+            idx1(dir)
                     .onEach { print("idx1 $it ") }
                     .filter {
-                        if (vert) {
-                            if (posDir) {
+                        if (dir.vert) {
+                            if (dir.posDir) {
                                 it <= y
                             } else {
                                 it >= y
                             }
                         } else {
-                            if (posDir) {
+                            if (dir.posDir) {
                                 it <= x
                             } else {
                                 it >= x
                             }
                         }
                     }
-                    .onEach {print("f $it ")}
+                    .onEach { print("f $it ") }
 
     fun access(dir: Direction, x: Int, y: Int, idx: Int): Spot {
         return if (dir.vert) {
@@ -107,8 +106,8 @@ class Platform(height: Int, width: Int) {
     }
 
     fun tilt(dir: Direction) {
-        for (y in dir.idx1(content.size - 1, content[0].size - 1)) {
-            for (x in dir.idx2(content.size - 1, content[0].size - 1)) {
+        for (y in idx1(dir)) {
+            for (x in idx2(dir)) {
                 if (content[y][x] == Spot.ROUNDED_ROCK) {
                     move(x, y, dir)
                 }
@@ -133,16 +132,16 @@ class Platform(height: Int, width: Int) {
         println("Cube is $min")
         val idx = firstEmpty(x, y, min, dir)
         println("Moving to ... well ... $x, $y, $idx, $dir")
-        dir.set(x, y, idx, content, Spot.ROUNDED_ROCK)
+        set(x, y, idx, dir, Spot.ROUNDED_ROCK)
     }
 
     private fun lastCube(x: Int, y: Int, dir: Direction): Int =
-            dir.before(x, y).lastOrNull { dir.access(content, x, y, it) == Spot.CUBE_ROCK } ?: 0
+            before(dir, x, y).lastOrNull { access(dir, x, y, it) == Spot.CUBE_ROCK } ?: before(dir, x, y).first()
 
     private fun firstEmpty(x: Int, y: Int, min: Int, dir: Direction): Int =
-            dir.before(x, y)
-                    .filter { it >= min }
-                    .first { dir.access(content, x, y, it) == Spot.EMPTY }
+            before(dir, x, y)
+                    .filter { something with min }
+                    .first { access(dir, x, y, it) == Spot.EMPTY }
 
     fun northLoad(): Int {
         var res = 0
