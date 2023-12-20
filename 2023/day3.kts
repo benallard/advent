@@ -1,7 +1,7 @@
 #!/usr/bin/env -S kotlinc -J-ea -script
 println("ready")
 
-class Schematics(val spots: List<List<Char>>) {
+class Schematics(private val spots: List<List<Char>>) {
 
     fun part1(): Int {
         var res = 0

@@ -75,7 +75,7 @@ fun processSeed(seed: Long): Long {
 fun <X, R> makeFunctionCache(fn: (X) -> R): (X) -> R {
     val cache: MutableMap<X, R> = HashMap()
     return {
-        cache.getOrPut(it, { fn(it) })
+        cache.getOrPut(it) { fn(it) }
     }
 }
 
