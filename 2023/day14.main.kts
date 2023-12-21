@@ -165,6 +165,12 @@ class Platform(height: Int, width: Int) {
         }
     }
 
+    fun dump(): String = content.joinToString(separator = "\n") { line ->
+        line.joinToString(separator = "") {
+            it.d.toString()
+        }
+    }
+
 }
 
 val lines = generateSequence { readlnOrNull() }
@@ -181,11 +187,37 @@ if (false) {
 //platform.tilt(Direction.SOUTH)
 //platform.print()
 
+class Cache {
+    private val states = ArrayList<String>()
+    private val values = ArrayList<Int>()
 
-(0..<1000000000).forEach { _ ->
-    platform.cycle()
-    //platform.print();println();
+    fun addState(state: String, value: Int) {
+        states.add(state)
+        values.add(value)
+    }
+
+    fun stateKnown(state: String) = states.contains(state)
+
+    fun calculateRest(amount: Int, state: String): Int {
+        val idx = states.indexOf(state)
+        val period = states.size - idx
+        val rest = amount - states.size
+        return values[idx + (rest % period)]
+    }
+
 }
 
-val part2 = platform.northLoad()
-println("Part2: $part2")
+val cache = Cache()
+
+for (idx in 0..<1000000000) {
+    if (cache.stateKnown(platform.dump())) {
+        val part2 = cache.calculateRest(1000000000, platform.dump())
+        println("Part2: $part2")
+        break;
+    }
+
+    cache.addState(platform.dump(), platform.northLoad())
+    platform.cycle()
+    //println("$idx: ${platform.northLoad()}")
+    //platform.print();println();
+}
