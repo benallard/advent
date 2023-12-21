@@ -25,6 +25,14 @@ enum class Direction(val vert: Boolean, val posDir: Boolean) {
     SOUTH(true, false),
     EAST(false, false),
     ;
+
+    fun after(value: Int, limit: Int): Boolean {
+        return when (posDir) {
+            true -> value >= limit
+            false -> value <= limit
+        }
+    }
+
 }
 
 class Platform(height: Int, width: Int) {
@@ -61,7 +69,7 @@ class Platform(height: Int, width: Int) {
 
     fun before(dir: Direction, x: Int, y: Int): List<Int> =
             idx1(dir)
-                    .onEach { print("idx1 $it ") }
+                    //.onEach { print("idx1 $it ") }
                     .filter {
                         if (dir.vert) {
                             if (dir.posDir) {
@@ -77,7 +85,7 @@ class Platform(height: Int, width: Int) {
                             }
                         }
                     }
-                    .onEach { print("f $it ") }
+    //.onEach { print("f $it ") }
 
     fun access(dir: Direction, x: Int, y: Int, idx: Int): Spot {
         return if (dir.vert) {
@@ -113,7 +121,7 @@ class Platform(height: Int, width: Int) {
                 }
             }
         }
-        print(); println()
+        //print(); println()
     }
 
     private fun moveNorth(x: Int, y: Int) {
@@ -126,12 +134,12 @@ class Platform(height: Int, width: Int) {
     }
 
     private fun move(x: Int, y: Int, dir: Direction) {
-        println("Moving $x, $y")
+        //println("Moving $x, $y")
         content[y][x] = Spot.EMPTY
         val min = lastCube(x, y, dir)
-        println("Cube is $min")
+        //println("Cube is $min")
         val idx = firstEmpty(x, y, min, dir)
-        println("Moving to ... well ... $x, $y, $idx, $dir")
+        //println("Moving to ... well ... $x, $y, $idx, $dir")
         set(x, y, idx, dir, Spot.ROUNDED_ROCK)
     }
 
@@ -140,7 +148,7 @@ class Platform(height: Int, width: Int) {
 
     private fun firstEmpty(x: Int, y: Int, min: Int, dir: Direction): Int =
             before(dir, x, y)
-                    .filter { something with min }
+                    .filter { dir.after(it, min) }
                     .first { access(dir, x, y, it) == Spot.EMPTY }
 
     fun northLoad(): Int {
@@ -170,11 +178,14 @@ if (false) {
     println("Part1: $part1")
 }
 
-platform.tilt(Direction.SOUTH)
-platform.print()
+//platform.tilt(Direction.SOUTH)
+//platform.print()
 
 
-//(0..3).forEach { _ -> platform.cycle() }
-//
-//val part2 = platform.northLoad()
-//println("Part2: $part2")
+(0..<1000000000).forEach { _ ->
+    platform.cycle()
+    //platform.print();println();
+}
+
+val part2 = platform.northLoad()
+println("Part2: $part2")
