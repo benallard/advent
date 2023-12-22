@@ -1,7 +1,7 @@
 #!/usr/bin/env -S kotlinc -J-ea -script
 println("ready")
 
-enum class Direction(val horizontal: Boolean, private val posDir: Boolean) {
+enum class Direction(val horizontal: Boolean, posDir: Boolean) {
     NORTH(false, false),
     EAST(true, true),
     SOUTH(false, true),
@@ -15,6 +15,26 @@ enum class Direction(val horizontal: Boolean, private val posDir: Boolean) {
     val dy: Int = if (horizontal) 0 else {
         if (posDir) 1 else -1
     }
+
+    fun entries(width: Int, height: Int) = object : Iterator<Pair<Coordinate, Direction>> {
+        var current = 0
+        val max = if (horizontal) width else height
+
+        override fun hasNext() = current < max
+
+        override fun next(): Pair<Coordinate, Direction> {
+            val coord = when (this@Direction) {
+                NORTH -> Coordinate(current, height - 1)
+                EAST -> Coordinate(0, current)
+                SOUTH -> Coordinate(current, 0)
+                WEST -> Coordinate(width - 1, current)
+            }
+            current += 1
+            return Pair(coord, this@Direction)
+        }
+
+    }
+
 }
 
 data class Coordinate(val x: Int, val y: Int) {
@@ -111,7 +131,14 @@ class Grid(width: Int, height: Int) {
             coordinate.x < 0 || coordinate.x >= structure[0].size
                     || coordinate.y < 0 || coordinate.y >= structure.size
 
-    fun energy() = light.flatMap { it.asIterable() }.count { it.size != 0 }
+    fun energy() =
+            light.flatMap { it.asIterable() }
+                    .count { it.size != 0 }
+
+    fun reset() =
+            light.flatMap { it.asIterable() }
+                    .forEach { it.clear() }
+
 
 }
 
@@ -122,3 +149,17 @@ grid.init(lines)
 grid.propagate(Coordinate(0, 0), Direction.EAST)
 val part1 = grid.energy()
 println("Part1: $part1")
+
+val part2 = Direction.entries
+        .flatMap {
+            it.entries(lines[0].length, lines.size)
+                    .asSequence()
+        }
+        .maxOf {
+            println(it)
+            grid.reset()
+            grid.propagate(it.first, it.second)
+            grid.energy()
+        }
+
+println("Part2: $part2")
