@@ -12,3 +12,6 @@ fun HASH(input: String): Int {
 }
 
 println("HASH**2 = ${HASH("HASH")}")
+
+val part1 = readln().split(",").sumOf { HASH(it) }
+println("Part1: $part1")
