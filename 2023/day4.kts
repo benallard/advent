@@ -1,13 +1,15 @@
 #!/usr/bin/env -S kotlinc -J-ea -script
 println("ready")
 
-class Card(val nr: Int, val winnings: Set<Int>, val have: Set<Int>) {
+class Card(val nr: Int,
+           private val winnings: Set<Int>,
+           private val have: Set<Int>) {
 
     fun points(): Int {
         var res = 0
-        for (winning in winnings){
-            if (have.contains(winning)){
-                if (res == 0){
+        for (winning in winnings) {
+            if (have.contains(winning)) {
+                if (res == 0) {
                     res = 1
                 } else {
                     res *= 2
@@ -49,9 +51,9 @@ for (line in generateSequence { readlnOrNull() }) {
 }
 
 println("Part1: $part1")
-val extras = IntArray(cards.size){ 1 }
-for ((idx, card) in cards.withIndex()){
-    for (win in 1..card.matchingNr()){
+val extras = IntArray(cards.size) { 1 }
+for ((idx, card) in cards.withIndex()) {
+    for (win in 1..card.matchingNr()) {
         extras[idx + win] += extras[idx]
     }
 }

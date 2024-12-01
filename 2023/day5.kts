@@ -23,7 +23,9 @@ class CategoryMap(val source: String, val destination: String){
         return value
     }
 
-    class Range(val source: Long, val destination: Long, val length: Int){
+    class Range(private val source: Long,
+                private val destination: Long,
+                private val length: Int){
         fun matches(value: Long): Boolean{
             return value >= source && value < source + length
         }
@@ -73,7 +75,7 @@ fun processSeed(seed: Long): Long {
 fun <X, R> makeFunctionCache(fn: (X) -> R): (X) -> R {
     val cache: MutableMap<X, R> = HashMap()
     return {
-        cache.getOrPut(it, { fn(it) })
+        cache.getOrPut(it) { fn(it) }
     }
 }
 
@@ -99,7 +101,7 @@ run {
     var lowestLoc = Long.MAX_VALUE
     for ((start, len) in seeds.chunked(2)) {
         for (seed in start..<start + len) {
-            val value = cachedProcess(seed)
+            val value = processSeed(seed)
             if (value < lowestLoc) {
                 lowestLoc = value
             }
