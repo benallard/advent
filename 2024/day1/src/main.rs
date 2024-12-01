@@ -20,9 +20,19 @@ fn main() {
         });
     locations_a.sort();
     locations_b.sort();
-    let sum_value: u32 = locations_a.iter()
+    let sum_value: u32 = locations_a
+        .iter()
         .zip(locations_b.iter())
         .map(|(a, b)| a.abs_diff(*b))
         .sum();
-    println!("Part1: {}", sum_value)
+    println!("Part1: {}", sum_value);
+
+    let part_2: usize = locations_a
+    .iter()
+    .map(|a| 
+        (*a as usize) * locations_b.iter().filter(|b| *b == a).count()
+    )
+    .sum();
+
+    println!("Part2: {}", part_2);
 }
