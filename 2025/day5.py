@@ -16,7 +16,7 @@ def countAllFresh():
     sortedFresh = sorted(fresh, key=lambda f: f[0])
     for i, (start, end) in enumerate(sortedFresh[:-1]):
         nextStart = sortedFresh[i + 1][0]
-        if nextStart < end:
+        if nextStart <= end:
             # Only add till next Start, next range wil care of the rest
             count += nextStart - start
             print(f"Adding start: {start} - {nextStart}: {count}")
