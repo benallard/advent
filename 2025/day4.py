@@ -20,6 +20,24 @@ def isAccessible(map, x, y):
     return sum < 4
 
 
+def countAccessible(grid):
+    count = 0
+    for j in range(len(grid)):
+        for i in range(len(grid[j])):
+            if isAccessible(grid, i, j):
+                count += 1
+    return count
+
+def removeAccessible(grid):
+    coords = []
+    for j in range(len(grid)):
+        for i in range(len(grid[j])):
+            if isAccessible(grid, i, j):
+                coords.append((i, j))
+    for x, y in coords:
+        grid[y][x] = False
+
+
 grid = [[]]
 
 for line in sys.stdin:
@@ -28,10 +46,16 @@ for line in sys.stdin:
         continue
     grid.append(list(map(lambda x: x == '@', line)))
 
-count = 0
-for j in range(len(grid)):
-    for i in range(len(grid[j])):
-        if isAccessible(grid, i, j):
-            count += 1
 
-print(count)
+print(countAccessible(grid))
+
+totalRemoved = 0
+accessible = countAccessible(grid)
+while accessible != 0:
+    totalRemoved += accessible
+    removeAccessible(grid)
+    accessible = countAccessible(grid)
+
+print(totalRemoved)
+
+
