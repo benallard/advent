@@ -2,7 +2,16 @@ import sys
 
 importfresh = True
 
-fresh = set()
+def isFresh(article):
+    for start, end in fresh:
+        if start > article:
+            continue
+        if end < article:
+            continue
+        return True
+    return False
+
+fresh = []
 
 countFresh = 0
 for line in sys.stdin:
@@ -13,10 +22,10 @@ for line in sys.stdin:
 
     if importfresh:
         start, end = map(int, line.split("-"))
-        fresh.update(range(start, end + 1))
+        fresh.append((start, end))
     else:
         article = int(line)
-        if article in fresh:
+        if isFresh(article):
             print(f"{article} is fresh")
             countFresh += 1
         else:
