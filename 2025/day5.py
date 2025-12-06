@@ -58,6 +58,43 @@ importfresh = True
 
 fresh = []
 
+def newRanges(state, newStart, newEnd):
+    """ Spits new ranges that don't overlap with existing ones. """
+    if newStart > newEnd:
+        return
+    for start, end in state:
+        print(f"Comparing {newStart}-{newEnd} with {start}-{end}")
+        if start <= newStart and end > newStart:
+            # Overlaps with our start, keep only the end
+            yield from newRanges(state, end+1, newEnd)
+            return
+        if start <= newEnd and end > newEnd:
+            # Overlaps with our end keep only the start
+            yield from newRanges(state, newStart, start - 1)
+            return
+        if start >= newStart and end <= newEnd:
+            # We are around it
+            yield from newRanges(state, newStart, start - 1)
+            yield from newRanges(state, end + 1, newEnd)
+            return
+        if start <= newStart and end >= newEnd:
+            # Surround us completely
+            return
+    # Return as-is
+    print(f"Adding: [{newStart}, {newEnd}]")
+    yield (newStart, newEnd)
+
+def createWorld(ranges):
+    res = []
+    for start, end in ranges:
+        res.extend(newRanges(res, start, end))
+    print(res)
+    return res
+
+assert countAllFresh(createWorld([(3,5), (10, 14), (16, 20), (12, 18)])) == 14
+assert countAllFresh(createWorld([(5,15), (5,8), (8, 10)])) == 11
+assert countAllFresh(createWorld([(5, 15), (6,8), (12, 20)])) == 16
+
 countFresh = 0
 for line in sys.stdin:
     line = line.strip()
@@ -67,7 +104,7 @@ for line in sys.stdin:
 
     if importfresh:
         start, end = map(int, line.split("-"))
-        fresh.append((start, end))
+        fresh.extend(newRanges(fresh, start, end))
     else:
         article = int(line)
         if isFresh(article):
@@ -82,3 +119,4 @@ allFresh = countAllFresh(fresh)
 print(f"{allFresh} posible fresh Articles")
 # 358520522905153 too high
 # 413102448573199 too high
+# 357485433193284 good
