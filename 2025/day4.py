@@ -16,7 +16,8 @@ def isAccessible(map, x, y):
     sum = 0
     for dx, dy in zip((-1, -1, -1, 0, 0, 1, 1, 1),(-1, 0, 1, -1, 1, -1, 0, 1)):
         sum += int(isOccupied(map, x + dx, y + dy))
-        print(f"{x}:{y}: {x+dx}:{y+dy}: {sum}")
+        if sum >= 4:
+            return False
     return sum < 4
 
 
@@ -36,6 +37,7 @@ def removeAccessible(grid):
                 coords.append((i, j))
     for x, y in coords:
         grid[y][x] = False
+    return len(coords)
 
 
 grid = [[]]
@@ -50,11 +52,10 @@ for line in sys.stdin:
 print(countAccessible(grid))
 
 totalRemoved = 0
-accessible = countAccessible(grid)
+accessible = removeAccessible(grid)
 while accessible != 0:
     totalRemoved += accessible
-    removeAccessible(grid)
-    accessible = countAccessible(grid)
+    accessible = removeAccessible(grid)
 
 print(totalRemoved)
 
