@@ -12,6 +12,7 @@ def isFresh(article):
     return False
 
 fresh = []
+max = 0
 
 countFresh = 0
 for line in sys.stdin:
@@ -23,6 +24,8 @@ for line in sys.stdin:
     if importfresh:
         start, end = map(int, line.split("-"))
         fresh.append((start, end))
+        if end > max:
+            max = end
     else:
         article = int(line)
         if isFresh(article):
@@ -32,3 +35,10 @@ for line in sys.stdin:
             print(f"{article} is spoiled")
 
 print(f"{countFresh} fresh articles")
+
+allFresh = 0
+for article in range(max + 1):
+    if isFresh(article):
+        allFresh += 1
+
+print(f"{allFresh} posible fresh Articles")
