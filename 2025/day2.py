@@ -15,9 +15,28 @@ assert isInvalid("6464")
 assert isInvalid("123123")
 assert not isInvalid("101")
 
+def isInvalidPart2(number):
+    n = len(number)
+    for size in range(1, n // 2 + 1):
+        if n % size != 0:
+            continue
+        part = number[:size]
+        if part * (n // size) == number:
+            return True
+    return False
+
+assert isInvalidPart2("55")
+assert isInvalidPart2("6464")
+assert isInvalidPart2("123123123")
+assert isInvalidPart2("1212121212")
+assert isInvalidPart2("1111111")
+assert not isInvalidPart2("101")
+
+
 ranges = input().strip().split(",")
 
 sum = 0
+sum2 =0
 
 for r in ranges:
     start, end = map(int, r.split("-"))
@@ -25,5 +44,8 @@ for r in ranges:
         strnum = str(number)
         if isInvalid(strnum):
             sum += number
+        if isInvalidPart2(strnum):
+            sum2 += number
 
 print(sum)
+print(sum2)
