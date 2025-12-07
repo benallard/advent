@@ -11,13 +11,13 @@ rays = [grid[0].index('S')]
 
 numsplits = 0
 for line in grid[1:]:
-    newrays = set()
+    newrays = list()
     for ray in rays:
         if line[ray] == '.':
-            newrays.add(ray)
+            newrays.append(ray)
         if line[ray] == '^':
-            newrays.add(ray-1)
-            newrays.add(ray+1)
+            newrays.append(ray-1)
+            newrays.append(ray+1)
             numsplits += 1
     rays = newrays
 
