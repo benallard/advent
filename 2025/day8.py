@@ -45,15 +45,27 @@ while len(strings) < 10:
     a, b = shortest(boxes, strings)
     print(f"{a} - {b}")
     strings.add((a._id, b._id))
-    found = False
-    for circuit in circuits:
+    found = None
+    found2 = None
+    for i, circuit in enumerate(circuits):
         if a._id in circuit or b._id in circuit:
-            circuit.update([a._id, b._id])
-            found = True
-    if not found:
+            if not found:
+                circuit.update([a._id, b._id])
+                found = i
+            else:
+                circuits[found].update(circuit)
+                found2 = i
+                break # No need to look further
+
+    if found is None:
         circuits.append(set([a._id, b._id]))
+    if found2 is not None:
+        del circuits[found2]
+
+    print (circuits)
 
 print(circuits)
+print (strings)
 
 lens = list(reversed(sorted(map(len, circuits))))
 print (lens)
