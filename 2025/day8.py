@@ -1,6 +1,5 @@
 import sys
 
-
 class JunctionBox:
     def __init__(self, id, x, y, z):
         self._id = id
@@ -13,6 +12,24 @@ class JunctionBox:
 
     def __str__(self):
         return f"{self._x},{self._y},{self._z} ({self._id})"
+
+    def __hash__(self):
+        return hash("JunctionBox" + str(self._id))
+
+class Memoize:
+    def __init__(self, f):
+        self.f = f
+        self.memo = {}
+    def __call__(self, *args):
+        if not args in self.memo:
+            print("Computing: ", args)
+            self.memo[args] = self.f(*args)
+        #Warning: You may wish to do a deepcopy here if returning objects
+        return self.memo[args]
+
+@Memoize
+def dist(a, b):
+    return a.distance(b)
 
 boxes = []
 
@@ -32,8 +49,8 @@ def shortest(boxes, strings):
         for b in boxes[i+1:]:
             if (a._id, b._id) in strings:
                 continue
-            if a.distance(b) < min:
-                min = a.distance(b)
+            if dist(a,b) < min:
+                min = dist(a, b)
                 min_a = a
                 min_b = b
     return (min_a, min_b)
@@ -41,7 +58,7 @@ def shortest(boxes, strings):
 
 circuits = []
 
-while len(strings) < 10:
+while len(strings) < 1000:
     a, b = shortest(boxes, strings)
     print(f"{a} - {b}")
     strings.add((a._id, b._id))
