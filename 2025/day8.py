@@ -1,5 +1,6 @@
 import sys
 
+
 class JunctionBox:
     def __init__(self, id, x, y, z):
         self._id = id
@@ -16,20 +17,16 @@ class JunctionBox:
     def __hash__(self):
         return hash("JunctionBox" + str(self._id))
 
-class Memoize:
-    def __init__(self, f):
-        self.f = f
-        self.memo = {}
-    def __call__(self, *args):
-        if not args in self.memo:
-            print("Computing: ", args)
-            self.memo[args] = self.f(*args)
-        #Warning: You may wish to do a deepcopy here if returning objects
-        return self.memo[args]
 
-@Memoize
-def dist(a, b):
-    return a.distance(b)
+class LightString:
+    def __init__(self, a, b):
+        self._a = a
+        self._b = b
+        self._length = a.distance(b)
+
+    def ends(self):
+        return (self._a, self._b)
+
 
 boxes = []
 
@@ -42,49 +39,45 @@ for line in sys.stdin:
 
 strings = set()
 
+all_strings = []
 
-def shortest(boxes, strings):
-    min = 999999999999999999999999999
-    for i, a in enumerate(boxes):
-        for b in boxes[i+1:]:
-            if (a._id, b._id) in strings:
-                continue
-            if dist(a,b) < min:
-                min = dist(a, b)
-                min_a = a
-                min_b = b
-    return (min_a, min_b)
+for i, a in enumerate(boxes):
+    for b in boxes[i + 1:]:
+        all_strings.append(LightString(a, b))
+
+all_strings = list(sorted(all_strings, key=lambda x: x._length))
+
 
 
 circuits = []
 
-while len(strings) < 1000:
-    a, b = shortest(boxes, strings)
+for i in range(1000):
+    a, b = all_strings[i].ends()
     print(f"{a} - {b}")
     strings.add((a._id, b._id))
     found = None
     found2 = None
     for i, circuit in enumerate(circuits):
         if a._id in circuit or b._id in circuit:
-            if not found:
+            if found is None:
                 circuit.update([a._id, b._id])
                 found = i
             else:
                 circuits[found].update(circuit)
                 found2 = i
-                break # No need to look further
+                break  # No need to look further
 
     if found is None:
         circuits.append(set([a._id, b._id]))
     if found2 is not None:
         del circuits[found2]
 
-    print (circuits)
+    print(circuits)
 
 print(circuits)
-print (strings)
+print(strings)
 
 lens = list(reversed(sorted(map(len, circuits))))
-print (lens)
+print(lens)
 
 print(f"Part1: {lens[0] * lens[1] * lens[2]}")
