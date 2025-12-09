@@ -37,8 +37,6 @@ for line in sys.stdin:
     x, y, z = map(int, line.split(","))
     boxes.append(JunctionBox(len(boxes), x, y, z))
 
-strings = set()
-
 all_strings = []
 
 for i, a in enumerate(boxes):
@@ -47,14 +45,7 @@ for i, a in enumerate(boxes):
 
 all_strings = list(sorted(all_strings, key=lambda x: x._length))
 
-
-
-circuits = []
-
-for i in range(1000):
-    a, b = all_strings[i].ends()
-    print(f"{a} - {b}")
-    strings.add((a._id, b._id))
+def add_string(circuits, a, b):
     found = None
     found2 = None
     for i, circuit in enumerate(circuits):
@@ -71,13 +62,37 @@ for i in range(1000):
         circuits.append(set([a._id, b._id]))
     if found2 is not None:
         del circuits[found2]
+    return circuits
+
+MAX = 1000
+
+circuits = []
+
+for i in range(MAX):
+    a, b = all_strings[i].ends()
+    print(f"{a} - {b}")
+    circuits = add_string(circuits, a, b)
 
     print(circuits)
 
 print(circuits)
-print(strings)
 
 lens = list(reversed(sorted(map(len, circuits))))
 print(lens)
 
 print(f"Part1: {lens[0] * lens[1] * lens[2]}")
+
+def complete(circuits):
+    return len(circuits) == 1 and sum(map(len, circuits)) == len(boxes)
+
+idx = MAX
+while not complete(circuits):
+    a, b = all_strings[idx].ends()
+    print(f"{a} - {b}")
+    circuits = add_string(circuits, a, b)
+    print(circuits)
+
+    print (f"Part2: {a._x * b._x}")
+    idx += 1
+
+# 17001512: too low
