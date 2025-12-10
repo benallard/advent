@@ -1,4 +1,5 @@
 import sys
+from itertools import combinations
 
 class Light:
     def __init__(self, str):
@@ -71,26 +72,18 @@ class Machine:
 
         The real question is Which buttons should I push (once!)
         """
-        # Try 1-button combination:
-        for i in self.buttons:
-            if self.attempt([i]):
-                return 1
-        # 2-buttons
-        for i in self.buttons:
-            for j in self.buttons:
-                if i == j:
-                    continue
-                if self.attempt([i, j]):
-                    return 2
-        # 3-buttons
-        for i in self.buttons:
-            for j in self.buttons:
-                for k in self.buttons:
-                    if len({i, j, k}) != 3:
-                        continue
-                    if self.attempt([i, j, k]):
-                        return 3
-        return 4
+        if self.attempt([]):
+            return 0
+
+        indices = list(self.buttons)
+        n = len(indices)
+
+        for k in range(1, n + 1):
+            for combo in combinations(indices, k):
+                if self.attempt(list(combo)):
+                    return k
+
+        return n
 
 
 
