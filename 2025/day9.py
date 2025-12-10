@@ -39,6 +39,7 @@ for line in sys.stdin:
 
 fill_greens(reds[len(reds) - 1], reds[0])
 
+
 def area(a, b):
     ax, ay = a
     bx, by = b
@@ -54,16 +55,19 @@ for i, a in enumerate(reds):
 
 print(f"Part1: {maxarea}")
 
+
 class Memoize:
     def __init__(self, f):
         self.f = f
         self.memo = {}
+
     def __call__(self, *args):
         if not args in self.memo:
             print(f"Computing: {args}")
             self.memo[args] = self.f(*args)
-        #Warning: You may wish to do a deepcopy here if returning objects
+        # Warning: You may wish to do a deepcopy here if returning objects
         return self.memo[args]
+
 
 @Memoize
 def is_inside(x, y):
@@ -76,12 +80,14 @@ def is_inside(x, y):
     # Go to the left edge
     greencounts = 0
     redcounts = 0
-    for i in reversed(range(x + 1)):
-        red = (i, y) in reds
-        redcounts += int(red)
-        if redcounts == 0:
-            greencounts += int((i, y) in greens)
-        print (f"Check: {i},{y}: {redcounts}, {greencounts}")
+    _reds = list(filter(lambda r: r[1] == y and r[0] <= x, reds))
+    maxred = max([*map(lambda r: r[0], _reds), 0])
+    _greens = filter(lambda g: g[1] == y and g[0] <= x and g[0] > maxred, greens)
+
+    redcounts = len(list(_reds))
+    greencounts = len(list(_greens))
+    print(f"Checking {x},{y}: r{redcounts} g{greencounts}")
+
     if redcounts == 1:
         # On a hor. line
         return True
@@ -91,22 +97,33 @@ def is_inside(x, y):
     if greencounts == 1:
         # Simply inside
         return True
-    print (f"Not good: reds: {redcounts}, greens: {greencounts}")
+    print(f"Not good: reds: {redcounts}, greens: {greencounts}")
     return False
 
 
 def area_inside(a, b):
+    """
+    Returns if the area between a and b is completely inside the shape
+    """
     ax, ay = a
     bx, by = b
     ax, bx = sorted([ax, bx])
     ay, by = sorted([ay, by])
-    print (f"Checking: {a} - {b}")
+    print(f"Checking: {a} - {b}")
+
+    # If any green is in there (except on the edge), we are not clean
+    insidegreen = len(list(filter(lambda g: ax < g[0] < bx and ay < g[1] < by, greens)))
+    print(f"{insidegreen} greens inside")
+
+    return insidegreen == 0
+
     for i in range(ax, bx + 1):
         for j in range(ay, by + 1):
             if not is_inside(i, j):
                 print(f"Not good: {i},{j}")
                 return False
     return True
+
 
 def print_floor():
     maxx = max(map(lambda x: x[0], reds))
@@ -122,7 +139,8 @@ def print_floor():
                 line += '.'
         print(line)
 
-#print_floor()
+
+# print_floor()
 
 maxarea = -1
 for i, a in enumerate(reds):
