@@ -1,3 +1,4 @@
+import functools
 import sys
 
 devices = {}
@@ -12,6 +13,7 @@ for line in sys.stdin:
 if 'out' not in devices:
     devices['out'] = {}
 
+@functools.lru_cache
 def numpaths(start, end):
     sum = 0
     for next in devices[start]:
