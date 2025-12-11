@@ -1,7 +1,5 @@
 import sys
 
-
-
 devices = {}
 
 for line in sys.stdin:
@@ -10,13 +8,32 @@ for line in sys.stdin:
     name, out = line.split(": ")
     devices[name] = set(out.split())
 
-def paths(start, end):
+
+def numpaths(start, end):
     sum = 0
     for next in devices[start]:
         if next == end:
             sum += 1
         else:
-            sum += paths(next, end)
+            sum += numpaths(next, end)
     return sum
 
-print(f"Part1: {paths('you', 'out')}")
+
+if 'you' in devices:
+    print(f"Part1: {numpaths('you', 'out')}")
+
+
+def paths(start, end, prefix=[]):
+    for next in devices[start]:
+        if next == end:
+            yield prefix + [next]
+        else:
+            yield from paths(next, end, prefix + [next])
+
+
+sum = 0
+for path in paths("svr", "out"):
+    if "fft" in path and "dac" in path:
+        sum += 1
+
+print(f"Part2: {sum}")
