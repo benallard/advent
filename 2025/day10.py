@@ -1,6 +1,9 @@
 import sys
 from itertools import combinations
 
+from z3 import *
+
+
 class Light:
     def __init__(self, str):
         self.target = [x == '#' for x in str]
@@ -21,10 +24,11 @@ class Light:
     def __str__(self):
         return ''.join(x and '#' or '.' for x in self.lights) + " -> " + ''.join(x and '#' or '.' for x in self.target)
 
+
 class Button:
     def __init__(self, str):
         buttons = str.split(" ")
-        #print(str, buttons)
+        # print(str, buttons)
         self.buttons = [set(map(int, x)) for x in map(lambda x: x[1:-1].split(","), buttons)]
 
     def __getitem__(self, item):
@@ -36,20 +40,21 @@ class Button:
     def __len__(self):
         return len(self.buttons)
 
+
 class Joltage:
     def __init__(self, str):
         self.target = list(int(x) for x in str.split(","))
         self.reset()
 
     def apply(self, change):
-        #print(change)
+        # print(change)
         for x in change:
             self.joltage[x] = self.joltage[x] + 1
-        #print(self)
+        # print(self)
 
     def reset(self):
         self.joltage = [0] * len(self.target)
-        #print("-")
+        # print("-")
 
     def done(self):
         if self.joltage != self.target:
@@ -63,7 +68,11 @@ class Joltage:
         return False
 
     def __str__(self):
-        return '{'+','.join(map(str,self.joltage))+'} -> {' +','.join(map(str,self.target))+'}'
+        return '{' + ','.join(map(str, self.joltage)) + '} -> {' + ','.join(map(str, self.target)) + '}'
+
+    def __iter__(self):
+        yield from self.target
+
 
 class Machine:
     def __init__(self, str):
@@ -71,7 +80,7 @@ class Machine:
         self.lights = Light(str[1:endlight])
         startjoltage = str.index('{')
         self.buttons = Button(str[endlight + 2: startjoltage - 1])
-        self.joltage = Joltage(str[startjoltage+1:-1])
+        self.joltage = Joltage(str[startjoltage + 1:-1])
 
     def done(self, joltage=False):
         if joltage:
@@ -96,7 +105,6 @@ class Machine:
         self.reset()
         self.presses(buttons)
         return self.done()
-
 
     def burst(self, presses):
         self.attempt2(presses)
@@ -148,7 +156,31 @@ class Machine:
             if self.attempt2(value):
                 return sum(value)
 
+    def z3_part2(self):
+        """
+        We want to solve a * () + b * () + ...
+        """
+        o = Optimize()
+        x = IntVector('x', len(self.buttons))
+        o.add(*[v >= 0 for v in x])
+        for i, jolt in enumerate(self.joltage):
+            idx = []
+            for b in self.buttons:
+                if i in self.buttons[b]:
+                    idx.append(b)
+            o.add(sum(x[_i] for _i in idx) == jolt)
+
+        o.minimize(Sum(x))
+
+        o.check()
+        model = o.model()
+        s = sum([model[v].as_long() for v in x])
+        print(f"Z3 said: {model} ({s})")
+        return s
+
+
 from collections import deque
+
 
 def _bfs(m, start):
     q = deque()
@@ -170,8 +202,6 @@ def _bfs(m, start):
                 yield nxt
 
 
-
-
 m = Machine("[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}")
 m.press(0)
 m.press(1)
@@ -186,7 +216,6 @@ m.press(5)
 m.press(5)
 assert m.done()
 
-
 m.reset()
 m.press(0)
 m.press(2)
@@ -200,23 +229,22 @@ m.press(4)
 m.press(5)
 assert m.done()
 
-
 m.reset()
 assert m.solve1() == 2
 
-assert m.attempt2([1,3,0,3,1,2])
-assert m.solve2() == 10
+assert m.attempt2([1, 3, 0, 3, 1, 2])
+assert m.z3_part2() == 10
 
 m = Machine("[...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}")
 assert m.solve1() == 3
 
-assert m.attempt2([2,5,0,5])
-assert m.solve2() == 12
+assert m.attempt2([2, 5, 0, 5])
+assert m.z3_part2() == 12
 
 m = Machine("[.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}")
 assert m.solve1() == 2
-assert m.attempt2([5,0,5,1])
-assert m.solve2() == 11
+assert m.attempt2([5, 0, 5, 1])
+assert m.z3_part2() == 11
 
 machines = []
 
@@ -230,4 +258,5 @@ for line in sys.stdin:
 res = sum(m.solve1() for m in machines)
 print(f"Part1: {res}")
 
-
+res = sum(m.z3_part2() for m in machines)
+print(f"Part2: {res}")
